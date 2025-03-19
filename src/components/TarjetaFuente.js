@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { colores, tipografia, espaciados } from '../styles/globales.js';
 
+
+//componente de tarjeta fuente que muestra la informacion del apartado de noticias
 const TarjetaFuente = ({ fuente }) => {
   const { nombre, descripcion, categoria, pais, idioma } = fuente;
   
