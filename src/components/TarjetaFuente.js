@@ -1,12 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { colores, tipografia, espaciados } from '../styles/globales.js';
-
 
 //componente de tarjeta fuente que muestra la informacion del apartado de noticias
 const TarjetaFuente = ({ fuente }) => {
-  const { nombre, descripcion, categoria, pais, idioma } = fuente;
-  
+  const { nombre, descripcion, categoria, pais, idioma, url } = fuente;
+
+  const abrirSitioWeb = () => {
+    if (url) {
+      Linking.openURL(url).catch(err => console.error('Error al abrir el enlace:', err));
+    }
+  };
+
   return (
     <View style={styles.tarjeta}>
       <Text style={styles.nombre}>{nombre}</Text>
@@ -21,7 +26,7 @@ const TarjetaFuente = ({ fuente }) => {
         {pais} · {idioma}
       </Text>
       
-      <TouchableOpacity style={styles.boton}>
+      <TouchableOpacity style={styles.boton} onPress={abrirSitioWeb}>
         <Text style={styles.textoBoton}>Ver sitio web</Text>
       </TouchableOpacity>
     </View>
