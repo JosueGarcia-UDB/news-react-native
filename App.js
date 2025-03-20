@@ -51,7 +51,7 @@ function Tabs() {
 }
 
 export default function App() {
-  const [modalVisible, setModalVisible] = useState(true); // Estado para controlar la modal
+  const [modalVisible, setModalVisible] = useState(true);
 
   // Cierra la modal y guarda las preferencias
   const handleCloseModal = () => {

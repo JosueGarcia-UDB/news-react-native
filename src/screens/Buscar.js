@@ -12,7 +12,7 @@ const Buscar = () => {
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
-  const API_KEY = 'b20bb19aa7094cf6b21a41cda437bc0e';
+  const API_KEY = 'c06a4f8c1bc8483988cc89f9cb0d5f1e';
 
   const toggleBusquedaAvanzada = () => {
     setMostrarAvanzada(!mostrarAvanzada);
