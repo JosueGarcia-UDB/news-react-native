@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Cabecera from '../components/Header.js';
-import TarjetaNoticia from '../components/TarjetaNoticia';
+import Cabecera from '../components/Header.jsx';
+import TarjetaNoticia from '../components/TarjetaNoticia.jsx';
 import { colores, tipografia, espaciados } from '../styles/globales.js';
-import useNoticias from '../hooks/useNoticias';
+import useNoticias from '../hooks/useNoticias.js';
 
 const Inicio = () => {
   const { noticias, cargando, error, ultimaActualizacion, recargar } = useNoticias();

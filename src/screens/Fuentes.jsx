@@ -2,10 +2,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, SectionList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Cabecera from '../components/Header.js';
-import TarjetaFuente from '../components/TarjetaFuente';
+import Cabecera from '../components/Header.jsx';
+import TarjetaFuente from '../components/TarjetaFuente.jsx';
 import { colores, tipografia, espaciados } from '../styles/globales.js';
-import useFuentes from '../hooks/useFuentes';
+import useFuentes from '../hooks/useFuentes.js';
 
 const Fuentes = () => {
   const { sections, loading, error } = useFuentes();

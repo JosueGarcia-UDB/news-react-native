@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons'; 
-import Cabecera from '../components/Header.js';
-import BusquedaAvanzada from '../components/BusquedaAvanzada.js';
+import Cabecera from '../components/Header.jsx';
+import BusquedaAvanzada from '../components/BusquedaAvanzada.jsx';
 import { colores, tipografia, espaciados } from '../styles/globales.js';
 
 const Buscar = () => {
