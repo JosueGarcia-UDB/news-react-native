@@ -1,17 +1,19 @@
+import { useState } from 'react'
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack'; 
+import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import ConfiguracionModal from './src/components/ConfiguracionModal';
 import Inicio from './src/screens/Inicio';
 import Busqueda from './src/screens/Buscar';
 import Fuentes from './src/screens/Fuentes';
-import Configuracion from './src/screens/Configuracion'; 
+import Configuracion from './src/screens/Configuracion';
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator(); 
+const Stack = createStackNavigator();
 
 function Tabs() {
   return (
@@ -49,9 +51,24 @@ function Tabs() {
 }
 
 export default function App() {
+  const [modalVisible, setModalVisible] = useState(true); // Estado para controlar la modal
+
+  // Cierra la modal y guarda las preferencias
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+
   return (
     <SafeAreaProvider>
       <StatusBar style="light" backgroundColor="#000000" />
+
+      {/* Modal de configuración */}
+      <ConfiguracionModal
+        visible={modalVisible}
+        onClose={handleCloseModal}
+      />
+
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Tabs" component={Tabs} />
