@@ -1,31 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { colores, tipografia, espaciados } from '../styles/globales.js';
+import React from 'react';
+import { SafeAreaView, View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import useCategorias from '../hooks/useCategorias'
 
 const Configuracion = ({ navigation }) => {
-  const [categorias, setCategorias] = useState([
-    { id: '1', nombre: 'Negocios', seleccionada: true },
-    { id: '2', nombre: 'Entretenimiento', seleccionada: true },
-    { id: '3', nombre: 'General', seleccionada: true },
-    { id: '4', nombre: 'Salud', seleccionada: true },
-    { id: '5', nombre: 'Ciencia', seleccionada: true },
-    { id: '6', nombre: 'Deportes', seleccionada: true },
-    { id: '7', nombre: 'Tecnología', seleccionada: true },
-  ]);
+  const { categorias, toggleCategoria, guardarPreferencias } = useCategorias();
 
-  const toggleCategoria = (id) => {
-    setCategorias(categorias.map(cat => 
-      cat.id === id ? { ...cat, seleccionada: !cat.seleccionada } : cat
-    ));
+  const handleGoBack = async () => {
+    await guardarPreferencias();
+    navigation.goBack();
   };
+
 
   return (
     <SafeAreaView style={styles.contenedor}>
       <View style={styles.cabecera}>
         <TouchableOpacity 
           style={styles.botonAtras}
-          onPress={() => navigation.goBack()}
+          onPress={handleGoBack}
         >
           <Text style={styles.iconoAtras}>←</Text>
           <Text style={styles.textoAtras}>Configuración</Text>
@@ -61,63 +52,62 @@ const Configuracion = ({ navigation }) => {
 const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
-    backgroundColor: colores.fondoOscuro,
+    backgroundColor: '#1E1E1E',
   },
   cabecera: {
-    paddingHorizontal: espaciados.margenContenedor,
-    paddingVertical: espaciados.medio,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: colores.borde,
+    borderBottomColor: '#333',
   },
   botonAtras: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconoAtras: {
-    fontSize: tipografia.tamaños.grande,
-    color: colores.textoClaro,
-    marginRight: espaciados.pequeño,
+    fontSize: 24,
+    marginRight: 10,
+    color: 'white', 
   },
   textoAtras: {
-    fontSize: tipografia.tamaños.medio,
-    color: colores.textoClaro,
-    fontWeight: tipografia.pesos.semiBold,
+    fontSize: 18,
+    color: 'white', 
   },
   scrollView: {
     flex: 1,
   },
   contenido: {
-    padding: espaciados.margenContenedor,
+    padding: 20,
   },
   tituloSeccion: {
-    color: colores.textoClaro,
-    fontSize: tipografia.tamaños.medio,
-    marginBottom: espaciados.grande,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    color: 'white', 
   },
   categoriaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: espaciados.medio,
-    borderBottomWidth: 1,
-    borderBottomColor: colores.borde,
+    marginBottom: 15,
   },
   checkboxContainer: {
     width: 24,
     height: 24,
-    borderRadius: 4,
-    backgroundColor: colores.primario,
-    marginRight: espaciados.medio,
+    borderWidth: 1,
+    borderColor: '#555', 
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 10,
+    backgroundColor: '#333', 
   },
   checkmark: {
-    color: colores.textoClaro,
-    fontSize: tipografia.tamaños.medio,
-    fontWeight: tipografia.pesos.negrita,
+    fontSize: 16,
+    color: 'white', 
   },
   nombreCategoria: {
-    color: colores.textoClaro,
-    fontSize: tipografia.tamaños.medio,
+    fontSize: 16,
+    color: 'white', 
   },
 });
 
