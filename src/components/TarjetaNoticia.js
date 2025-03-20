@@ -1,25 +1,70 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Linking } from 'react-native';
 import { colores, tipografia, espaciados } from '../styles/globales.js';
 
-const TarjetaNoticia = ({ noticia }) => {
-  const { fuente, titulo, descripcion, imagen } = noticia;
+const TarjetaNoticia = ({ noticia = {} }) => {
+  // Si 'noticia' es un array, extraemos el objeto (normalmente en la posición 1)
+  const noticiaData = Array.isArray(noticia) ? noticia[1] : noticia;
+  console.log('Datos de la noticia:', noticiaData);
+
+  const { 
+    title = '', 
+    description = '', 
+    urlToImage = null,
+    url = '',
+    publishedAt = '',
+    categoria = ''
+  } = noticiaData;
   
+  const sourceName = noticiaData?.source?.name || 'Fuente desconocida';
+  const fechaPublicacion = publishedAt ? new Date(publishedAt).toLocaleDateString() : '';
+  
+  // Manejar apertura de URL
+  const abrirNoticia = () => {
+    if (url) {
+      Linking.openURL(url).catch(err => console.error('Error al abrir URL:', err));
+    }
+  };
+
   return (
     <View style={styles.tarjeta}>
-      <Text style={styles.fuente}>{fuente}</Text>
-      <Text style={styles.titulo}>{titulo}</Text>
-      <View style={styles.contenedorImagen}>
-        <Image source={imagen} style={styles.imagen} />
+      {/* Encabezado con fuente y fecha */}
+      <View style={styles.encabezado}>
+        <Text style={styles.fuente}>{sourceName}</Text>
+        {fechaPublicacion && <Text style={styles.fecha}>{fechaPublicacion}</Text>}
       </View>
-      {descripcion ? (
+
+      {/* Categoría (si existe) */}
+      {categoria && (
+        <View style={styles.categoriaContainer}>
+          <Text style={styles.categoriaTexto}>{categoria.toUpperCase()}</Text>
+        </View>
+      )}
+
+      {/* Título de la noticia */}
+      <Text style={styles.titulo}>{title}</Text>
+
+      {/* Imagen de la noticia (si existe) */}
+      {urlToImage && (
+        <View style={styles.contenedorImagen}>
+          <Image 
+            source={{ uri: urlToImage }} 
+            style={styles.imagen}
+            resizeMode="cover"
+            defaultSource={require('../assets/img/placeholder.png')} // Placeholder si la imagen no carga
+          />
+        </View>
+      )}
+
+      {/* Descripción y botón "Leer más" */}
+      {description && (
         <>
-          <Text style={styles.descripcion}>{descripcion}</Text>
-          <TouchableOpacity style={styles.boton}>
+          <Text style={styles.descripcion}>{description}</Text>
+          <TouchableOpacity style={styles.boton} onPress={abrirNoticia}>
             <Text style={styles.textoBoton}>Leer más</Text>
           </TouchableOpacity>
         </>
-      ) : null}
+      )}
     </View>
   );
 };
@@ -31,11 +76,38 @@ const styles = StyleSheet.create({
     marginBottom: espaciados.medio,
     overflow: 'hidden',
   },
-  fuente: {
-    color: colores.textoTerciario,
-    fontSize: tipografia.tamaños.pequeño,
+  encabezado: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: espaciados.base,
-    paddingBottom: espaciados.minimo,
+    paddingBottom: espaciados.medio,
+    backgroundColor: colores.fondoOscuro,
+  },
+  fuente: {
+    color: colores.textoSecundario,
+    fontSize: tipografia.tamaños.normal, 
+    flex: 1,
+    marginRight: espaciados.pequeño,
+    
+  },
+  fecha: {
+    color: colores.textoSecundario, // Cambiado de textoTerciario
+    fontSize: tipografia.tamaños.normal, // Aumentado de pequeño
+  },
+  categoriaContainer: {
+    backgroundColor: colores.primario, // Usamos el color primario para destacar
+    alignSelf: 'flex-start',
+    paddingHorizontal: espaciados.pequeño,
+    paddingVertical: espaciados.minimo,
+    borderRadius: espaciados.radioBorde.completo,
+    marginLeft: espaciados.base,
+    marginBlock: espaciados.pequeño
+  },
+  categoriaTexto: {
+    color: colores.textoBoton,
+    fontSize: tipografia.tamaños.pequeño,
+    fontWeight: tipografia.pesos.negrita,
   },
   titulo: {
     color: colores.textoClaro,
@@ -43,6 +115,14 @@ const styles = StyleSheet.create({
     fontWeight: tipografia.pesos.negrita,
     paddingHorizontal: espaciados.base,
     paddingBottom: espaciados.pequeño,
+    lineHeight: 24, // Añadido para mejor legibilidad
+  },
+  descripcion: {
+    color: colores.textoSecundario,
+    fontSize: tipografia.tamaños.normal,
+    padding: espaciados.base,
+    paddingBottom: espaciados.pequeño,
+    lineHeight: 20, // Añadido
   },
   contenedorImagen: {
     height: 180,
@@ -52,20 +132,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    opacity: 0.7,
-  },
-  descripcion: {
-    color: colores.textoSecundario,
-    fontSize: tipografia.tamaños.normal,
-    padding: espaciados.base,
-    paddingBottom: espaciados.pequeño,
   },
   boton: {
     backgroundColor: colores.boton,
     borderRadius: espaciados.radioBorde.completo,
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     marginLeft: espaciados.base,
-    marginBottom: espaciados.base,
+    marginBottom: espaciados.medio,
     paddingHorizontal: espaciados.medio,
     paddingVertical: espaciados.pequeño,
   },
