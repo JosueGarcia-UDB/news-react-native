@@ -35,7 +35,7 @@
 |----------------------|--------|-------------------------------|
 | Josué Eduardo García Estrada | GE240098 | Consumir API de NewsAPI |
 | Eduardo Alfredo Ramírez Torres | RT240549 | Consumir API de NewsAPI |
-| José Fernando Rodríguez Escamilla | RE24013 | Creación de prototipos de Figma |
+| José Fernando Rodríguez Escamilla | RE240134 | Creación de prototipos de Figma |
 | Roberto Arturo Duarte Mejía | DM240115 | Creación de prototipos de Figma |
 | Jeremy Edenilson Flores Portillo | FP240479 | Creación de interfaces |
 | Oscar Daniel Soto Jovel | SJ241841 | Creación de interfaces |

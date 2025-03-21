@@ -3,13 +3,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Estado global compartido con valores iniciales
 let categoriasGlobales = [
-  { id: '1', nombre: 'business', seleccionada: false },
-  { id: '2', nombre: 'entertainment', seleccionada: false },
-  { id: '3', nombre: 'general', seleccionada: true },
-  { id: '4', nombre: 'health', seleccionada: false },
-  { id: '5', nombre: 'science', seleccionada: false },
-  { id: '6', nombre: 'sports', seleccionada: false },
-  { id: '7', nombre: 'technology', seleccionada: false },
+  { id: '1', nombre: 'Business', nombreCategoria: 'Negocios', seleccionada: false },
+  { id: '2', nombre: 'Entertainment', nombreCategoria: 'Entretenimiento', seleccionada: false },
+  { id: '3', nombre: 'General', nombreCategoria: 'General', seleccionada: false },
+  { id: '4', nombre: 'Health', nombreCategoria: 'Salud', seleccionada: false },
+  { id: '5', nombre: 'Science', nombreCategoria: 'Ciencia', seleccionada: false },
+  { id: '6', nombre: 'Sports', nombreCategoria: 'Deportes', seleccionada: false },
+  { id: '7', nombre: 'Technology', nombreCategoria: 'Tecnología', seleccionada: false },
 ];
 
 //Con fines de depuración
@@ -54,6 +54,7 @@ const useCategorias = () => {
       const categoriasValidas = categoriasGlobales.map(cat => ({
         id: cat.id,
         nombre: cat.nombre, // Aseguramos que se guarde el nombre correcto en inglés
+        nombreCategoria: cat.nombreCategoria,
         seleccionada: cat.seleccionada
       }));
       await AsyncStorage.setItem('preferencias', JSON.stringify(categoriasValidas));

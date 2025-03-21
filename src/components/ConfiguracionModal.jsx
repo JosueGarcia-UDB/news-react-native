@@ -41,7 +41,7 @@ const ConfiguracionModal = ({ visible, onClose }) => {
                     <Text style={styles.checkmark}>✓</Text>
                   )}
                 </View>
-                <Text style={styles.nombreCategoria}>{categoria.nombre}</Text>
+                <Text style={styles.nombreCategoria}>{categoria.nombreCategoria}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>

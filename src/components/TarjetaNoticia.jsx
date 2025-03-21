@@ -5,7 +5,6 @@ import { colores, tipografia, espaciados } from '../styles/globales.js';
 const TarjetaNoticia = ({ noticia = {} }) => {
   // Si 'noticia' es un array, extraemos el objeto (normalmente en la posición 1)
   const noticiaData = Array.isArray(noticia) ? noticia[1] : noticia;
-  console.log('Datos de la noticia:', noticiaData);
 
   const { 
     title = '', 
