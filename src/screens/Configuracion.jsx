@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform } from 'react-native';
 import useCategorias from '../hooks/useCategorias'
 
 const Configuracion = ({ navigation }) => {
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
     backgroundColor: '#1E1E1E',
+    marginTop: Platform.OS === "ios" ? 0 : 20
   },
   cabecera: {
     flexDirection: 'row',
