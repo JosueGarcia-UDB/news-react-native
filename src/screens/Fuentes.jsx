@@ -1,11 +1,11 @@
 // Fuentes.js
-import React from 'react';
-import { View, Text, StyleSheet, SectionList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Cabecera from '../components/Header.jsx';
-import TarjetaFuente from '../components/TarjetaFuente.jsx';
-import { colores, tipografia, espaciados } from '../styles/globales.js';
-import useFuentes from '../hooks/useFuentes.js';
+import React from "react";
+import { View, Text, StyleSheet, SectionList } from "react-native";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import Cabecera from "../components/Header.jsx";
+import TarjetaFuente from "../components/TarjetaFuente.jsx";
+import { colores, tipografia, espaciados } from "../styles/globales.js";
+import useFuentes from "../hooks/useFuentes.js";
 
 const Fuentes = () => {
   const { sections, loading, error } = useFuentes();
@@ -14,7 +14,9 @@ const Fuentes = () => {
     return (
       <SafeAreaView style={styles.contenedor}>
         <Cabecera />
-        <Text style={{ color: colores.textoClaro, textAlign: 'center' }}>Cargando...</Text>
+        <Text style={{ color: colores.textoClaro, textAlign: "center" }}>
+          Cargando...
+        </Text>
       </SafeAreaView>
     );
   }
@@ -23,24 +25,26 @@ const Fuentes = () => {
     return (
       <SafeAreaView style={styles.contenedor}>
         <Cabecera />
-        <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>
+        <Text style={{ color: "red", textAlign: "center" }}>{error}</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.contenedor}>
-      <Cabecera />
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <TarjetaFuente fuente={item} />}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.tituloSeccion}>{title}</Text>
-        )}
-        contentContainerStyle={styles.contenido}
-      />
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.contenedor}>
+        <Cabecera />
+        <SectionList
+          sections={sections}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <TarjetaFuente fuente={item} />}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={styles.tituloSeccion}>{title}</Text>
+          )}
+          contentContainerStyle={styles.contenido}
+        />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

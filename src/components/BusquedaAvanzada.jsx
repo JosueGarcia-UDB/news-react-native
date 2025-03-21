@@ -3,67 +3,79 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
+  Platform,
 } from "react-native";
-import { colores, tipografia, espaciados } from "../styles/globales.js";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from "@react-native-picker/picker";
+import { colores, tipografia, espaciados } from "../styles/globales.js";
 
-// Componente de búsqueda avanzada
 const BusquedaAvanzada = ({ onBuscar }) => {
   const [idioma, setIdioma] = useState("");
   const [publicado, setPublicado] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // En BusquedaAvanzada.jsx
+  const onChangeFecha = (event, selectedDate) => {
+    setShowDatePicker(false); // Cierra el picker en ambos sistemas
+    if (selectedDate) {
+      const fechaFormateada = selectedDate.toISOString().split("T")[0];
+      setPublicado(fechaFormateada);
+    }
+  };
+
   const manejarBusqueda = () => {
-    const parametros = {
+    onBuscar({
       idioma: idioma.trim(),
       publicado: publicado.trim(),
-    };
-    onBuscar(parametros);
-    console.log(parametros)
+    });
   };
+
   return (
     <View style={styles.contenedor}>
       <Text style={styles.titulo}>Búsqueda avanzada</Text>
       <View style={styles.row}>
+        {/* Selector de Fecha */}
         <View style={[styles.campo, styles.widthInput]}>
           <Text style={styles.etiqueta}>Fecha de publicación</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="AAAA-MM-DD"
-            placeholderTextColor={colores.textoTerciario}
-            value={publicado}
-            onChangeText={setPublicado}
-          />
+          <TouchableOpacity 
+            onPress={() => setShowDatePicker(true)} 
+            style={styles.fechaBoton}
+          >
+            <Text style={styles.fechaTexto}>
+              {publicado || "Seleccionar fecha"}
+            </Text>
+          </TouchableOpacity>
+          
+          {showDatePicker && (
+            <DateTimePicker
+              value={publicado ? new Date(publicado) : new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={onChangeFecha}
+              locale="es-ES" // Español
+              theme="light" // Tema claro
+            />
+          )}
         </View>
+        {/* Selector de Idioma */}
         <View style={[styles.campo, styles.widthInput]}>
           <Text style={styles.etiqueta}>Idioma</Text>
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={idioma}
-              onValueChange={(itemValue) => setIdioma(itemValue)}
+              onValueChange={setIdioma}
               style={styles.picker}
               dropdownIconColor={colores.textoClaro}
-              mode="dropdown" // Para Android
-              dropdownStyle={styles.dropdownStyle}
-              itemStyle={styles.pickerItem}
+              mode="dropdown"
             >
-              <Picker.Item label="Todos" value="" style={styles.pickerItem} />
-              <Picker.Item
-                label="Español"
-                value="es"
-                style={styles.pickerItem}
-              />
-              <Picker.Item
-                label="Inglés"
-                value="en"
-                style={styles.pickerItem}
-              />
+              <Picker.Item label="Todos" value="" />
+              <Picker.Item label="Español" value="es" />
+              <Picker.Item label="Inglés" value="en" />
             </Picker>
           </View>
         </View>
       </View>
+
       <TouchableOpacity style={styles.boton} onPress={manejarBusqueda}>
         <Text style={styles.textoBoton}>Buscar</Text>
       </TouchableOpacity>
@@ -71,6 +83,7 @@ const BusquedaAvanzada = ({ onBuscar }) => {
   );
 };
 
+// Mantenemos los mismos estilos que tenías originalmente
 const styles = StyleSheet.create({
   contenedor: {
     backgroundColor: colores.fondoTarjeta,
@@ -85,6 +98,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: espaciados.medio,
   },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: espaciados.medio,
+  },
+  widthInput: {
+    flex: 1,
+  },
   campo: {
     marginBottom: espaciados.medio,
   },
@@ -93,22 +114,17 @@ const styles = StyleSheet.create({
     fontSize: tipografia.tamaños.normal,
     marginBottom: espaciados.pequeño,
   },
-  input: {
+  fechaBoton: {
     backgroundColor: colores.fondoOscuro,
     borderRadius: espaciados.radioBorde.pequeño,
+    paddingVertical: espaciados.pequeño,
+    paddingHorizontal: espaciados.medio,
+    height: 40,
+    justifyContent: "center",
+  },
+  fechaTexto: {
     color: colores.textoClaro,
     fontSize: tipografia.tamaños.normal,
-    paddingHorizontal: espaciados.medio,
-    paddingVertical: espaciados.pequeño,
-    height: 40, // Altura uniforme para inputs
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: espaciados.medio,
-  },
-  widthInput: {
-    flex: 1,
   },
   boton: {
     backgroundColor: colores.fondoOscuro,
@@ -125,17 +141,12 @@ const styles = StyleSheet.create({
     borderRadius: espaciados.radioBorde.pequeño,
     justifyContent: "center",
     height: 40,
-    overflow: 'hidden',
-  },
-  dropdownStyle: {
-    borderColor: colores.fondoOscuro,
-  },
-  pickerItem: {
-    fontSize: tipografia.tamaños.normal,
-    color: colores.textoClaro,
+    overflow: "hidden",
+    backgroundColor: colores.fondoOscuro,
   },
   picker: {
     color: colores.textoClaro,
+    backgroundColor: colores.fondoOscuro,
   },
 });
 

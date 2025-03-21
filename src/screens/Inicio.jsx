@@ -1,13 +1,21 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, ActivityIndicator, RefreshControl, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Cabecera from '../components/Header.jsx';
-import TarjetaNoticia from '../components/TarjetaNoticia.jsx';
-import { colores, tipografia, espaciados } from '../styles/globales.js';
-import useNoticias from '../hooks/useNoticias.js';
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  StyleSheet,
+} from "react-native";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import Cabecera from "../components/Header.jsx";
+import TarjetaNoticia from "../components/TarjetaNoticia.jsx";
+import { colores, tipografia, espaciados } from "../styles/globales.js";
+import useNoticias from "../hooks/useNoticias.js";
 
 const Inicio = () => {
-  const { noticias, cargando, error, ultimaActualizacion, recargar } = useNoticias();
+  const { noticias, cargando, error, ultimaActualizacion, recargar } =
+    useNoticias();
   const [refreshing, setRefreshing] = useState(false);
 
   // Función para manejar pull-to-refresh
@@ -47,7 +55,8 @@ const Inicio = () => {
         <Cabecera />
         <View style={styles.cargando}>
           <Text style={styles.errorText}>
-            Ocurrió un error al cargar las noticias. Por favor, intenta de nuevo.
+            Ocurrió un error al cargar las noticias. Por favor, intenta de
+            nuevo.
           </Text>
           <TouchableOpacity style={styles.botonReintentar} onPress={recargar}>
             <Text style={styles.textoBotonReintentar}>Reintentar</Text>
@@ -59,37 +68,42 @@ const Inicio = () => {
 
   // Renderizar lista de noticias
   return (
-    <SafeAreaView style={styles.contenedor}>
-      <Cabecera />
-      <View style={styles.contenedorFlatList}>
-      <FlatList
-        style={styles.flatList}
-        contentContainerStyle={styles.contenido}
-        data={noticias}
-        renderItem={({ item }) => <TarjetaNoticia noticia={item} />}
-        keyExtractor={(item, index) => `${item.url || item.title}-${index}`}
-        ListHeaderComponent={
-          <>
-            <Text style={styles.tituloSeccion}>Lo más destacado en lo que te gusta</Text>
-            {renderUltimaActualizacion()}
-          </>
-        }
-        ListEmptyComponent={
-          <Text style={styles.sinNoticias}>
-            No hay noticias disponibles. Por favor, selecciona algunas categorías en la configuración.
-          </Text>
-        }
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[colores.textoClaro]}
-            tintColor={colores.textoClaro}
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.contenedor}>
+        <Cabecera />
+        <View style={styles.contenedorFlatList}>
+          <FlatList
+            style={styles.flatList}
+            contentContainerStyle={styles.contenido}
+            data={noticias}
+            renderItem={({ item }) => <TarjetaNoticia noticia={item} />}
+            keyExtractor={(item, index) => `${item.url || item.title}-${index}`}
+            ListHeaderComponent={
+              <>
+                <Text style={styles.tituloSeccion}>
+                  Lo más destacado en lo que te gusta
+                </Text>
+                {renderUltimaActualizacion()}
+              </>
+            }
+            ListEmptyComponent={
+              <Text style={styles.sinNoticias}>
+                No hay noticias disponibles. Por favor, selecciona algunas
+                categorías en la configuración.
+              </Text>
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={[colores.textoClaro]}
+                tintColor={colores.textoClaro}
+              />
+            }
           />
-        }
-      />
-      </View>
-    </SafeAreaView>
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
@@ -103,8 +117,8 @@ const styles = StyleSheet.create({
   },
   cargando: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   cargandoTexto: {
     color: colores.textoClaro,
@@ -114,7 +128,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: colores.textoClaro,
     fontSize: tipografia.tamaños.medio,
-    textAlign: 'center',
+    textAlign: "center",
     padding: espaciados.base,
   },
   botonReintentar: {
@@ -131,7 +145,7 @@ const styles = StyleSheet.create({
   },
   tituloSeccion: {
     color: colores.textoClaro,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: tipografia.tamaños.extraGrande,
     fontWeight: tipografia.pesos.negrita,
     marginTop: 0,
@@ -141,13 +155,13 @@ const styles = StyleSheet.create({
   sinNoticias: {
     color: colores.textoClaro,
     fontSize: tipografia.tamaños.medio,
-    textAlign: 'center',
+    textAlign: "center",
     padding: espaciados.base,
   },
   ultimaActualizacion: {
     color: colores.textoTerciario,
     fontSize: tipografia.tamaños.pequeño,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: espaciados.medio,
   },
 });

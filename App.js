@@ -37,8 +37,8 @@ function Tabs() {
         tabBarStyle: {
           backgroundColor: '#121212',
           borderTopWidth: 0,
-          height: 60,
-          paddingBottom: 10,
+          height: 70,
+          paddingTop: 10,
         },
         headerShown: false,
       })}
@@ -78,12 +78,3 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

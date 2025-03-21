@@ -4,7 +4,7 @@ export const useNuevaBusqueda = () => {
   const [resultados, setResultados] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
-  const API_KEY = '04fc44b2e4314e96b8397639f509664b';
+  const API_KEY = '074708e3af494bc8960fe054b4557298';
 
   const realizarBusqueda = async (parametros) => {
     setCargando(true);
