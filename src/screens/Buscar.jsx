@@ -1,91 +1,37 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons'; 
+import { Ionicons } from '@expo/vector-icons';
 import Cabecera from '../components/Header.jsx';
 import BusquedaAvanzada from '../components/BusquedaAvanzada.jsx';
+import TarjetaNoticia from '../components/TarjetaNoticia';
+import { useNuevaBusqueda } from '../hooks/useNuevaBusqueda';
 import { colores, tipografia, espaciados } from '../styles/globales.js';
 
 const Buscar = () => {
   const [mostrarAvanzada, setMostrarAvanzada] = useState(false);
-  const [resultados, setResultados] = useState([]);
-  const [cargando, setCargando] = useState(false);
-  const [error, setError] = useState(null);
   const [query, setQuery] = useState('');
-  const API_KEY = 'c06a4f8c1bc8483988cc89f9cb0d5f1e';
+  const { resultados, cargando, error, realizarBusqueda } = useNuevaBusqueda();
 
   const toggleBusquedaAvanzada = () => {
     setMostrarAvanzada(!mostrarAvanzada);
   };
 
-  // Función que arma la URL de búsqueda según los parámetros
-  const realizarBusqueda = (parametros) => {
-    setCargando(true);
-    setError(null);
-
-    const url = new URL('https://newsapi.org/v2/everything');
-    url.searchParams.append('apiKey', API_KEY);
-
-    // Validar y agregar parámetros
-    let tieneParametros = false;
-    if (parametros.q) {
-      url.searchParams.append('q', parametros.q);
-      tieneParametros = true;
-    }
-    if (parametros.fuente) {
-      url.searchParams.append('sources', parametros.fuente);
-      tieneParametros = true;
-    }
-    if (parametros.dominio) {
-      url.searchParams.append('domains', parametros.dominio);
-      tieneParametros = true;
-    }
-    if (parametros.fechaInicio) {
-      url.searchParams.append('from', parametros.fechaInicio);
-      tieneParametros = true;
-    }
-    if (parametros.fechaFin) {
-      url.searchParams.append('to', parametros.fechaFin);
-      tieneParametros = true;
-    }
-    if (parametros.idioma) {
-      url.searchParams.append('language', parametros.idioma);
-      tieneParametros = true;
-    }
-    if (parametros.orden) {
-      url.searchParams.append('sortBy', parametros.orden);
-      tieneParametros = true;
-    }
-
-    // Si no hay parámetros válidos, mostrar un error
-    if (!tieneParametros) {
-      setError('Por favor, ingresa al menos un parámetro de búsqueda.');
-      setCargando(false);
-      return;
-    }
-
-    // Depurar la URL generada
-    console.log('URL de búsqueda:', url.toString());
-
-    fetch(url.toString())
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.articles && data.articles.length > 0) {
-          setResultados(data.articles);
-        } else {
-          setError('No se encontraron resultados.');
-        }
-        setCargando(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setCargando(false);
-      });
+  const handleBasicSearch = () => {
+    if (!query.trim()) return;
+    realizarBusqueda({ q: query });
   };
 
-  // Función para realizar la búsqueda básica con la consulta del TextInput
-  const handleBasicSearch = () => {
-    realizarBusqueda({ q: query });
+  const handleAdvancedSearch = (params) => {
+    const parametros = { 
+      q: query,
+      language: params.idioma,
+      from: params.publicado, 
+      to: params.publicado   
+    };
+    
+    realizarBusqueda(parametros);
+    toggleBusquedaAvanzada();
   };
 
   return (
@@ -102,6 +48,7 @@ const Buscar = () => {
               placeholderTextColor={colores.textoTerciario}
               value={query}
               onChangeText={setQuery}
+              onSubmitEditing={handleBasicSearch}
             />
             <Ionicons name="search-outline" size={20} color={colores.textoTerciario} />
           </View>
@@ -116,16 +63,17 @@ const Buscar = () => {
             </Text>
           </TouchableOpacity>
           
-          {mostrarAvanzada && <BusquedaAvanzada onBuscar={realizarBusqueda} />}
+          {mostrarAvanzada && <BusquedaAvanzada onBuscar={handleAdvancedSearch} />}
           
-          {cargando && <Text style={{ color: colores.textoClaro, textAlign: 'center' }}>Cargando...</Text>}
-          {error && <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>}
+          {cargando && <Text style={styles.mensaje}>Cargando...</Text>}
+          {error && <Text style={styles.error}>{error}</Text>}
           
+          {!cargando && !error && resultados.length === 0 && (
+            <Text style={styles.mensaje}>No hay noticias relacionadas con tu búsqueda</Text>
+          )}
+
           {resultados.map((articulo, index) => (
-            <View key={index} style={styles.resultado}>
-              <Text style={styles.tituloResultado}>{articulo.title}</Text>
-              <Text style={styles.descripcionResultado}>{articulo.description}</Text>
-            </View>
+            <TarjetaNoticia key={index} noticia={articulo} />
           ))}
         </View>
       </ScrollView>
@@ -200,6 +148,17 @@ const styles = StyleSheet.create({
   descripcionResultado: {
     color: colores.textoClaro,
     fontSize: tipografia.tamaños.normal,
+  },
+  mensaje: {
+    color: colores.textoClaro,
+    textAlign: 'center',
+    marginVertical: espaciados.medio,
+    fontSize: tipografia.tamaños.normal,
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: espaciados.medio,
   },
 });
 

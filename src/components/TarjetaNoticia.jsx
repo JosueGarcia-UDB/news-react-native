@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   tarjeta: {
     backgroundColor: colores.fondoTarjeta,
     borderRadius: espaciados.radioBorde.medio,
-    marginBottom: espaciados.medio,
+    marginBlock: espaciados.pequeño,
     overflow: 'hidden',
   },
   encabezado: {
@@ -80,28 +80,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: espaciados.base,
-    paddingBottom: espaciados.medio,
-    backgroundColor: colores.fondoOscuro,
+    marginBottom: espaciados.pequeño,
   },
   fuente: {
     color: colores.textoSecundario,
     fontSize: tipografia.tamaños.normal, 
     flex: 1,
     marginRight: espaciados.pequeño,
-    
   },
   fecha: {
-    color: colores.textoSecundario, // Cambiado de textoTerciario
-    fontSize: tipografia.tamaños.normal, // Aumentado de pequeño
+    color: colores.textoSecundario,
+    fontSize: tipografia.tamaños.normal,
   },
   categoriaContainer: {
-    backgroundColor: colores.primario, // Usamos el color primario para destacar
+    backgroundColor: colores.primario, 
     alignSelf: 'flex-start',
     paddingHorizontal: espaciados.pequeño,
     paddingVertical: espaciados.minimo,
     borderRadius: espaciados.radioBorde.completo,
     marginLeft: espaciados.base,
-    marginBlock: espaciados.pequeño
+    marginBottom: espaciados.medio
   },
   categoriaTexto: {
     color: colores.textoBoton,

@@ -61,6 +61,7 @@ const Inicio = () => {
   return (
     <SafeAreaView style={styles.contenedor}>
       <Cabecera />
+      <View style={styles.contenedorFlatList}>
       <FlatList
         style={styles.flatList}
         contentContainerStyle={styles.contenido}
@@ -87,6 +88,7 @@ const Inicio = () => {
           />
         }
       />
+      </View>
     </SafeAreaView>
   );
 };
@@ -95,6 +97,9 @@ const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
     backgroundColor: colores.fondoOscuro,
+  },
+  contenedorFlatList: {
+    margin: espaciados.margenContenedor,
   },
   cargando: {
     flex: 1,
@@ -129,7 +134,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: tipografia.tamaños.extraGrande,
     fontWeight: tipografia.pesos.negrita,
-    marginBlock: espaciados.medio,
+    marginTop: 0,
+    marginBlock: espaciados.base,
     paddingHorizontal: espaciados.base,
   },
   sinNoticias: {
@@ -142,7 +148,7 @@ const styles = StyleSheet.create({
     color: colores.textoTerciario,
     fontSize: tipografia.tamaños.pequeño,
     textAlign: 'center',
-    marginBottom: espaciados.base,
+    marginBottom: espaciados.medio,
   },
 });
 
