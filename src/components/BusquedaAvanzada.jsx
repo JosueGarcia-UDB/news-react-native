@@ -5,8 +5,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   Platform,
+  Modal,
+  SafeAreaView,
 } from "react-native";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import { colores, tipografia, espaciados } from "../styles/globales.js";
 
@@ -14,13 +16,29 @@ const BusquedaAvanzada = ({ onBuscar }) => {
   const [idioma, setIdioma] = useState("");
   const [publicado, setPublicado] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [tempDate, setTempDate] = useState(new Date());
 
-  const onChangeFecha = (event, selectedDate) => {
-    setShowDatePicker(false); // Cierra el picker en ambos sistemas
-    if (selectedDate) {
-      const fechaFormateada = selectedDate.toISOString().split("T")[0];
-      setPublicado(fechaFormateada);
+  const onChangeFecha = (_, selectedDate) => {
+    const currentDate = selectedDate || tempDate;
+    setTempDate(currentDate);
+    
+    if (Platform.OS === "android") {
+      setShowDatePicker(false);
+      if (selectedDate) {
+        const fechaFormateada = currentDate.toISOString().split("T")[0];
+        setPublicado(fechaFormateada);
+      }
     }
+  };
+
+  const confirmarFechaIOS = () => {
+    const fechaFormateada = tempDate.toISOString().split("T")[0];
+    setPublicado(fechaFormateada);
+    setShowDatePicker(false);
+  };
+
+  const cancelarFechaIOS = () => {
+    setShowDatePicker(false);
   };
 
   const manejarBusqueda = () => {
@@ -30,6 +48,45 @@ const BusquedaAvanzada = ({ onBuscar }) => {
     });
   };
 
+  // Renderizado condicional para iOS
+  const renderDatePickerIOS = () => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showDatePicker}
+        onRequestClose={() => setShowDatePicker(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <TouchableOpacity onPress={cancelarFechaIOS} style={styles.modalButton}>
+                <Text style={styles.cancelarTexto}>Cancelar</Text>
+              </TouchableOpacity>
+              <Text style={styles.modalTitle}>Seleccionar fecha</Text>
+              <TouchableOpacity onPress={confirmarFechaIOS} style={styles.modalButton}>
+                <Text style={styles.aceptarTexto}>Aceptar</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.datePickerContainer}>
+              <DateTimePicker
+                value={tempDate}
+                mode="date"
+                display="spinner"
+                onChange={onChangeFecha}
+                themeVariant="light"
+                locale="es-ES"
+                style={styles.iosDatePicker}
+                textColor={colores.textoClaro}
+                accentColor={colores.textoClaro}
+              />
+            </View>
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
+  };
+
   return (
     <View style={styles.contenedor}>
       <Text style={styles.titulo}>Búsqueda avanzada</Text>
@@ -37,41 +94,61 @@ const BusquedaAvanzada = ({ onBuscar }) => {
         {/* Selector de Fecha */}
         <View style={[styles.campo, styles.widthInput]}>
           <Text style={styles.etiqueta}>Fecha de publicación</Text>
-          <TouchableOpacity 
-            onPress={() => setShowDatePicker(true)} 
+          <TouchableOpacity
+            onPress={() => {
+              setTempDate(publicado ? new Date(publicado) : new Date());
+              setShowDatePicker(true);
+            }}
             style={styles.fechaBoton}
           >
             <Text style={styles.fechaTexto}>
               {publicado || "Seleccionar fecha"}
             </Text>
           </TouchableOpacity>
-          
-          {showDatePicker && (
+
+          {/* Para Android */}
+          {showDatePicker && Platform.OS === "android" && (
             <DateTimePicker
               value={publicado ? new Date(publicado) : new Date()}
               mode="date"
-              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              display="default"
               onChange={onChangeFecha}
-              locale="es-ES" // Español
-              theme="light" // Tema claro
+              locale="es-ES"
             />
           )}
+
+          {/* Para iOS, se renderiza un Modal */}
+          {Platform.OS === "ios" && renderDatePickerIOS()}
         </View>
+
         {/* Selector de Idioma */}
         <View style={[styles.campo, styles.widthInput]}>
           <Text style={styles.etiqueta}>Idioma</Text>
           <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={idioma}
-              onValueChange={setIdioma}
-              style={styles.picker}
-              dropdownIconColor={colores.textoClaro}
-              mode="dropdown"
-            >
-              <Picker.Item label="Todos" value="" />
-              <Picker.Item label="Español" value="es" />
-              <Picker.Item label="Inglés" value="en" />
-            </Picker>
+            {Platform.OS === "ios" ? (
+              <Picker
+                selectedValue={idioma}
+                onValueChange={setIdioma}
+                style={styles.pickerIOS}
+                itemStyle={styles.pickerItemIOS}
+              >
+                <Picker.Item label="Todos" value="" />
+                <Picker.Item label="Español" value="es" />
+                <Picker.Item label="Inglés" value="en" />
+              </Picker>
+            ) : (
+              <Picker
+                selectedValue={idioma}
+                onValueChange={setIdioma}
+                style={styles.picker}
+                dropdownIconColor={colores.textoClaro}
+                mode="dropdown"
+              >
+                <Picker.Item label="Todos" value="" />
+                <Picker.Item label="Español" value="es" />
+                <Picker.Item label="Inglés" value="en" />
+              </Picker>
+            )}
           </View>
         </View>
       </View>
@@ -83,7 +160,6 @@ const BusquedaAvanzada = ({ onBuscar }) => {
   );
 };
 
-// Mantenemos los mismos estilos que tenías originalmente
 const styles = StyleSheet.create({
   contenedor: {
     backgroundColor: colores.fondoTarjeta,
@@ -137,6 +213,8 @@ const styles = StyleSheet.create({
     fontSize: tipografia.tamaños.normal,
     fontWeight: tipografia.pesos.bold,
   },
+  
+  // Estilos para el Picker
   pickerContainer: {
     borderRadius: espaciados.radioBorde.pequeño,
     justifyContent: "center",
@@ -147,6 +225,64 @@ const styles = StyleSheet.create({
   picker: {
     color: colores.textoClaro,
     backgroundColor: colores.fondoOscuro,
+    height: 60,
+  },
+  pickerIOS: {
+    color: colores.textoClaro,
+    height: 120,
+    width: '100%',
+    backgroundColor: colores.fondoTarjeta
+  },
+  pickerItemIOS: {
+    color: colores.textoClaro,
+    height: 120,
+    fontSize: tipografia.tamaños.normal,
+  },
+  
+  // Estilos para el Modal de iOS
+  modalContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: colores.fondoTarjeta,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 0,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: espaciados.medio,
+    borderBottomWidth: 1,
+    borderBottomColor: colores.fondoOscuro,
+  },
+  modalTitle: {
+    color: colores.textoClaro,
+    fontSize: tipografia.tamaños.normal,
+    fontWeight: tipografia.pesos.semiBold,
+  },
+  modalButton: {
+    padding: espaciados.pequeño,
+  },
+  cancelarTexto: {
+    color: colores.peligro || '#ff6b6b',
+    fontSize: tipografia.tamaños.normal,
+  },
+  aceptarTexto: {
+    color: colores.principal || '#4ecdc4',
+    fontSize: tipografia.tamaños.normal,
+    fontWeight: tipografia.pesos.semiBold,
+  },
+  datePickerContainer: {
+    alignItems: 'center',
+    padding: espaciados.pequeño,
+  },
+  iosDatePicker: {
+    width: '100%',
+    height: 200,
   },
 });
 
