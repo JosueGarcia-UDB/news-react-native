@@ -14,7 +14,7 @@ export const useNuevaBusqueda = () => {
       const url = new URL('https://newsapi.org/v2/everything');
 
       // Validación básica
-      if (!parametros.q && !parametros.sources && !parametros.domains) {
+      if (!parametros.q) {
         throw new Error('Debes ingresar un término de búsqueda o al menos un filtro');
       }
 
@@ -32,7 +32,9 @@ export const useNuevaBusqueda = () => {
           url.searchParams.append(key, value);
         }
       });
+
       url.searchParams.append('apiKey', API_KEY);
+
       const response = await fetch(url.toString());
       console.log(response)
 
@@ -51,12 +53,12 @@ export const useNuevaBusqueda = () => {
 
       setResultados(data.articles);
     } catch (err) {
-      setError(err.message.replace('newsapi.org', '')); // Limpiar mensajes de error
+      setError(err.message.replace('newsapi.org', '')); 
       setResultados([]);
     } finally {
       setCargando(false);
     }
   };
 
-  return { resultados, cargando, error, realizarBusqueda };
+  return { resultados, cargando, error, realizarBusqueda};
 };
