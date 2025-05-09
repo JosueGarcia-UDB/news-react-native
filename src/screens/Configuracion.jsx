@@ -1,6 +1,8 @@
 import React from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, ScrollView, StyleSheet, Platform } from 'react-native';
 import useCategorias from '../hooks/useCategorias'
+import AuthButton from '../components/AuthButton';
+import { colores, tipografia, espaciados, estilosComunes } from '../styles/globales';
 
 const Configuracion = ({ navigation }) => {
   const { categorias, toggleCategoria, guardarPreferencias } = useCategorias();
@@ -10,6 +12,10 @@ const Configuracion = ({ navigation }) => {
     navigation.goBack();
   };
 
+  const handleLogout = () => {
+    // Lógica para cerrar sesión
+    navigation.navigate('Login');
+  };
 
   return (
     <SafeAreaView style={styles.contenedor}>
@@ -19,16 +25,30 @@ const Configuracion = ({ navigation }) => {
           onPress={handleGoBack}
         >
           <Text style={styles.iconoAtras}>←</Text>
-          <Text style={styles.textoAtras}>Configuración</Text>
+          <Text style={styles.textoAtras}>Perfil</Text>
         </TouchableOpacity>
       </View>
       
       <ScrollView style={styles.scrollView}>
+
         <View style={styles.contenido}>
-          <Text style={styles.tituloSeccion}>
-            Marca las categorías de tu interés
-          </Text>
-          
+          {/* Sección de acciones de perfil */}
+          <View style={styles.seccion}>
+            <Text style={styles.tituloSeccion}>Cuenta</Text>
+            <AuthButton 
+              title="Editar perfil" 
+              onPress={() => navigation.navigate('EditarPerfil')} 
+              style={[styles.botonConfig, styles.botonFondoGris]} 
+            />
+            <AuthButton 
+              title="Cambiar contraseña" 
+              onPress={() => console.log("Cambiar contraseña")} 
+              style={[styles.botonConfig, styles.botonFondoGris]}
+            />
+          </View>
+          {/* Sección de preferencias */}
+        <Text style={styles.tituloSeccion}>Preferencias</Text>
+            
           {categorias.map((categoria) => (
             <TouchableOpacity 
               key={categoria.id}
@@ -43,6 +63,22 @@ const Configuracion = ({ navigation }) => {
               <Text style={styles.nombreCategoria}>{categoria.nombreCategoria}</Text>
             </TouchableOpacity>
           ))}
+
+          {/* Botón de cerrar sesión */}
+          <View style={styles.seccion}>
+          <AuthButton 
+              title="Activar inición de sesión biométrico" 
+              onPress={() => console.log("Activar inicio de sesion biometrico")} 
+              style={styles.botonConfig}
+            />
+          </View>
+          <View style={styles.seccion}>
+            <AuthButton 
+              title="Cerrar sesión" 
+              onPress={handleLogout} 
+              style={[styles.botonConfig, styles.botonFondoGris]}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -109,6 +145,12 @@ const styles = StyleSheet.create({
   nombreCategoria: {
     fontSize: 16,
     color: 'white', 
+  },
+  botonFondoGris: {
+    backgroundColor: '#423E3E',
+  },
+  botonCerrarSesion: {
+    backgroundColor: '#BA1816',
   },
 });
 

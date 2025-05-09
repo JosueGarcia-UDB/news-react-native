@@ -18,7 +18,7 @@ const Header = () => {
       </View>
       {/* este es el icono de configuración */}
       <TouchableOpacity style={styles.botonAjustes} onPress={() => navigation.navigate('Configuracion')}>
-        <Ionicons name="settings-outline" size={24} color={colores.textoClaro} />
+        <Ionicons name="person-outline" size={24} color={colores.textoClaro} />
       </TouchableOpacity>
     </View>
   );
