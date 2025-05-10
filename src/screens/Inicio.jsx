@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+// src/screens/Inicio.js
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,26 +7,41 @@ import {
   ActivityIndicator,
   RefreshControl,
   StyleSheet,
-} from "react-native";
-import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import Cabecera from "../components/Header.jsx";
-import TarjetaNoticia from "../components/TarjetaNoticia.jsx";
-import { colores, tipografia, espaciados } from "../styles/globales.js";
-import useNoticias from "../hooks/useNoticias.js";
+  TouchableOpacity,
+} from 'react-native';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native'; 
+import Cabecera from '../components/Header.jsx';
+import TarjetaNoticia from '../components/TarjetaNoticia.jsx';
+import { colores, tipografia, espaciados } from '../styles/globales.js';
+import useNoticias from '../hooks/useNoticias.js';
+import { AuthContext } from '../context/AuthContext';
 
-const Inicio = () => {
-  const { noticias, cargando, error, ultimaActualizacion, recargar } =
-    useNoticias();
+const Inicio = ({ navigation }) => {
+  const { noticias, cargando, error, ultimaActualizacion, recargar } = useNoticias();
   const [refreshing, setRefreshing] = useState(false);
+  const { user } = useContext(AuthContext);
 
-  // Función para manejar pull-to-refresh
+  // Redirigir al login si no hay usuario
+  useEffect(() => {
+    if (!user) {
+      navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+    }
+  }, [user]);
+
+  // Recargar noticias al volver a esta pantalla
+  useFocusEffect(
+    useCallback(() => {
+      recargar();
+    }, [recargar])
+  );
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await recargar();
     setRefreshing(false);
   }, [recargar]);
 
-  // Función para renderizar mensaje de última actualización
   const renderUltimaActualizacion = () => {
     if (!ultimaActualizacion) return null;
     return (
@@ -35,7 +51,6 @@ const Inicio = () => {
     );
   };
 
-  // Renderizar estado de carga
   if (cargando && !refreshing) {
     return (
       <SafeAreaView style={styles.contenedor}>
@@ -48,15 +63,13 @@ const Inicio = () => {
     );
   }
 
-  // Renderizar estado de error
   if (error) {
     return (
       <SafeAreaView style={styles.contenedor}>
         <Cabecera />
         <View style={styles.cargando}>
           <Text style={styles.errorText}>
-            Ocurrió un error al cargar las noticias. Por favor, intenta de
-            nuevo.
+            Ocurrió un error al cargar las noticias. Por favor, intenta de nuevo.
           </Text>
           <TouchableOpacity style={styles.botonReintentar} onPress={recargar}>
             <Text style={styles.textoBotonReintentar}>Reintentar</Text>
@@ -66,7 +79,6 @@ const Inicio = () => {
     );
   }
 
-  // Renderizar lista de noticias
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.contenedor}>
@@ -88,8 +100,7 @@ const Inicio = () => {
             }
             ListEmptyComponent={
               <Text style={styles.sinNoticias}>
-                No hay noticias disponibles. Por favor, selecciona algunas
-                categorías en la configuración.
+                No hay noticias disponibles. Por favor, selecciona algunas categorías en la configuración.
               </Text>
             }
             refreshControl={
@@ -117,8 +128,8 @@ const styles = StyleSheet.create({
   },
   cargando: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cargandoTexto: {
     color: colores.textoClaro,
@@ -128,7 +139,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: colores.textoClaro,
     fontSize: tipografia.tamaños.medio,
-    textAlign: "center",
+    textAlign: 'center',
     padding: espaciados.base,
   },
   botonReintentar: {
@@ -145,7 +156,7 @@ const styles = StyleSheet.create({
   },
   tituloSeccion: {
     color: colores.textoClaro,
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: tipografia.tamaños.extraGrande,
     fontWeight: tipografia.pesos.negrita,
     marginTop: 0,
@@ -155,13 +166,13 @@ const styles = StyleSheet.create({
   sinNoticias: {
     color: colores.textoClaro,
     fontSize: tipografia.tamaños.medio,
-    textAlign: "center",
+    textAlign: 'center',
     padding: espaciados.base,
   },
   ultimaActualizacion: {
     color: colores.textoTerciario,
     fontSize: tipografia.tamaños.pequeño,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: espaciados.medio,
   },
 });

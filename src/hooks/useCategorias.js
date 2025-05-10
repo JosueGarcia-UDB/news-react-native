@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../context/AuthContext';
 
-// Estado global compartido con valores iniciales
-let categoriasGlobales = [
+const CATEGORIAS_INICIALES = [
   { id: '1', nombre: 'Business', nombreCategoria: 'Negocios', seleccionada: false },
   { id: '2', nombre: 'Entertainment', nombreCategoria: 'Entretenimiento', seleccionada: false },
   { id: '3', nombre: 'General', nombreCategoria: 'General', seleccionada: false },
@@ -12,67 +12,60 @@ let categoriasGlobales = [
   { id: '7', nombre: 'Technology', nombreCategoria: 'Tecnología', seleccionada: false },
 ];
 
-//Con fines de depuración
-let listeners = [];
-
 const useCategorias = () => {
-  const [categorias, setCategorias] = useState(categoriasGlobales);
+  const { user } = useContext(AuthContext);
+  const [categorias, setCategorias] = useState(CATEGORIAS_INICIALES);
 
   useEffect(() => {
-    const listener = (nuevasCategorias) => {
-      setCategorias([...nuevasCategorias]);
-    };
-    listeners.push(listener);
-
     const cargarPreferencias = async () => {
-      try {
-        const preferenciasGuardadas = await AsyncStorage.getItem('preferencias');
-        if (preferenciasGuardadas) {
-          categoriasGlobales = JSON.parse(preferenciasGuardadas);
-          notificarCambios();
-          console.log("Preferencias cargadas desde AsyncStorage:", {categoriasGlobales});
+      if (user) {
+        const prefsKey = `prefs_${user.username}`;
+        try {
+          const preferenciasGuardadas = await AsyncStorage.getItem(prefsKey);
+          if (preferenciasGuardadas) {
+            setCategorias(JSON.parse(preferenciasGuardadas));
+          } else {
+            setCategorias(CATEGORIAS_INICIALES);
+          }
+        } catch (error) {
+          console.error('Error al cargar las preferencias:', error);
         }
-      } catch (error) {
-        console.error('Error al cargar las preferencias:', error);
+      } else {
+        setCategorias(CATEGORIAS_INICIALES);
       }
     };
 
     cargarPreferencias();
+  }, [user]);
 
-    return () => {
-      listeners = listeners.filter(l => l !== listener);
-    };
-  }, []);
+  const toggleCategoria = async (id) => {
+    const nuevasCategorias = categorias.map(cat =>
+      cat.id === id ? { ...cat, seleccionada: !cat.seleccionada } : cat
+    );
+    setCategorias(nuevasCategorias);
 
-  //Función para depurar que categorías se tienen seleccionadas
-  const notificarCambios = () => {
-    listeners.forEach(listener => listener(categoriasGlobales));
+    if (user) {
+      const prefsKey = `prefs_${user.username}`;
+      try {
+        await AsyncStorage.setItem(prefsKey, JSON.stringify(nuevasCategorias));
+      } catch (error) {
+        console.error('Error al guardar las preferencias:', error);
+      }
+    }
   };
 
   const guardarPreferencias = async () => {
-    try {
-      const categoriasValidas = categoriasGlobales.map(cat => ({
-        id: cat.id,
-        nombre: cat.nombre, // Aseguramos que se guarde el nombre correcto en inglés
-        nombreCategoria: cat.nombreCategoria,
-        seleccionada: cat.seleccionada
-      }));
-      await AsyncStorage.setItem('preferencias', JSON.stringify(categoriasValidas));
-      notificarCambios();
-      return true;
-    } catch (error) {
-      console.error('Error al guardar las preferencias:', error);
-      return false;
+    if (user) {
+      const prefsKey = `prefs_${user.username}`;
+      try {
+        await AsyncStorage.setItem(prefsKey, JSON.stringify(categorias));
+        return true;
+      } catch (error) {
+        console.error('Error al guardar las preferencias:', error);
+        return false;
+      }
     }
-  };
-  
-
-  const toggleCategoria = async (id) => {
-    categoriasGlobales = categoriasGlobales.map(cat =>
-      cat.id === id ? { ...cat, seleccionada: !cat.seleccionada } : cat
-    );
-    await guardarPreferencias(); // Guardar inmediatamente al cambiar
-    notificarCambios();
+    return false;
   };
 
   return {

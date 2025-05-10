@@ -21,6 +21,7 @@ const AuthInput = ({
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   contenedor: {
     marginBottom: espaciados.medio,
@@ -34,4 +35,5 @@ const styles = StyleSheet.create({
     fontSize: tipografia.tamaños.normal,
   },
 });
+
 export default AuthInput;

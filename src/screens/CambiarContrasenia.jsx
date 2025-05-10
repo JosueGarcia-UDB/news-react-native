@@ -1,76 +1,100 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity , Platform} from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import AuthInput from '../components/AuthInput';
 import AuthButton from '../components/AuthButton';
-import { ScrollView } from 'react-native';
-import {colores, tipografia, espaciados, estilosComunes} from '../styles/globales';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthContext } from '../context/AuthContext';
+import Toast from 'react-native-toast-message';
 
-const CambiarContrasenia = () =>{
-    const navigation = useNavigation();
-    const [contrasenia, setContrasenia] = useState('');
-    const [nuevaContrasenia, setNuevaContrasenia] = useState('');
-    const [Confirmarcontrasenia, setConfirmarContrasenia] = useState('');
+const CambiarContrasenia = () => {
+  const navigation = useNavigation();
+  const { changePassword, logout } = useContext(AuthContext);
+  const [contraseniaActual, setContraseniaActual] = useState('');
+  const [nuevaContrasenia, setNuevaContrasenia] = useState('');
+  const [confirmarContrasenia, setConfirmarContrasenia] = useState('');
 
-    const handleGoBack = async () => {
-        navigation.goBack();
-      };
-    return(
-        <SafeAreaView style={styles.contenedor}>
-            <View style={styles.cabecera}>
-                <TouchableOpacity 
-                    style={styles.botonAtras}
-                    onPress={handleGoBack}
-                >
-                    <Text style={styles.iconoAtras}>←</Text>
-                    <Text style={styles.textoAtras}>Cambiar Contraseña</Text>
-                </TouchableOpacity>
-                </View>
-                <ScrollView style={styles.scrollView}>
-                    <AuthInput 
-                        placeholder="Contraseña Actual"
-                        value={contrasenia}
-                        onChangeText={setContrasenia}
-                    />
-                    
-                    <AuthInput 
-                        placeholder="Nueva Contraseña"
-                        value={nuevaContrasenia}
-                        onChangeText={setNuevaContrasenia}
-                    />
-                    
-                    <AuthInput 
-                        placeholder="Confirmar Contraseña"
-                        secureTextEntry
-                        value={nuevaContrasenia}
-                        onChangeText={setNuevaContrasenia}
-                    />
-                    <View style={styles.seccion}>
-                <AuthButton 
-                title="Confirmar cambios" 
-                onPress={handleGoBack
-                } 
-                style={[styles.botonConfig, styles.botonCerrarSesion]}
-                />
-            </View>
-        </ScrollView>
+  const handleChange = async () => {
+    if (!contraseniaActual.trim() || !nuevaContrasenia.trim() || !confirmarContrasenia.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: '⚠️ Error',
+        text2: 'Todos los campos son obligatorios',
+      });
+      return;
+    }
+
+    if (nuevaContrasenia !== confirmarContrasenia) {
+      Toast.show({
+        type: 'error',
+        text1: '🔒 Error',
+        text2: 'Las contraseñas nuevas no coinciden',
+      });
+      return;
+    }
+
+    try {
+      await changePassword(contraseniaActual.trim(), nuevaContrasenia.trim());
+      Toast.show({
+        type: 'success',
+        text1: '✅ Éxito',
+        text2: 'Contraseña actualizada correctamente',
+      });
+      await logout();
+      navigation.navigate('Login');
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: '⚠️ Error',
+        text2: error.message || 'No se pudo cambiar la contraseña',
+      });
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.contenedor}>
+      <View style={styles.cabecera}>
+        <TouchableOpacity style={styles.botonAtras} onPress={() => navigation.goBack()}>
+          <Text style={styles.iconoAtras}>←</Text>
+          <Text style={styles.textoAtras}>Cambiar Contraseña</Text>
+        </TouchableOpacity>
+      </View>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.contenido}>
+        <AuthInput
+          placeholder="Contraseña anterior"
+          secureTextEntry
+          value={contraseniaActual}
+          onChangeText={setContraseniaActual}
+        />
+        <AuthInput
+          placeholder="Nueva contraseña"
+          secureTextEntry
+          value={nuevaContrasenia}
+          onChangeText={setNuevaContrasenia}
+        />
+        <AuthInput
+          placeholder="Confirmar nueva contraseña"
+          secureTextEntry
+          value={confirmarContrasenia}
+          onChangeText={setConfirmarContrasenia}
+        />
+        <View style={styles.botonContainer}>
+          <AuthButton
+            title="Confirmar cambios"
+            onPress={handleChange}
+            style={styles.botonGuardar}
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
-    )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
     backgroundColor: '#1E1E1E',
-    marginTop: Platform.OS === "ios" ? 0 : 20
-  },
-  botonConfig: {
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginTop: 20,
+    marginTop: Platform.OS === 'ios' ? 0 : 20,
   },
   cabecera: {
     flexDirection: 'row',
@@ -86,11 +110,11 @@ const styles = StyleSheet.create({
   iconoAtras: {
     fontSize: 24,
     marginRight: 10,
-    color: 'white', 
+    color: 'white',
   },
   textoAtras: {
     fontSize: 18,
-    color: 'white', 
+    color: 'white',
   },
   scrollView: {
     flex: 1,
@@ -98,39 +122,14 @@ const styles = StyleSheet.create({
   contenido: {
     padding: 20,
   },
-  tituloSeccion: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: 'white', 
-  },
-  categoriaItem: {
-    flexDirection: 'row',
+  botonContainer: {
     alignItems: 'center',
-    marginBottom: 15,
+    marginTop: 20,
   },
-  checkboxContainer: {
-    width: 24,
-    height: 24,
-    borderWidth: 1,
-    borderColor: '#555', 
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-    backgroundColor: '#333', 
-  },
-  checkmark: {
-    fontSize: 16,
-    color: 'white', 
-  },
-  nombreCategoria: {
-    fontSize: 16,
-    color: 'white', 
-  },
-  botonFondoGris: {
-    backgroundColor: '#423E3E',
-  },
-  botonCerrarSesion: {
+  botonGuardar: {
+    width: '80%', 
+    paddingVertical: 12,
+    borderRadius: 10,
     backgroundColor: '#BA1816',
   },
 });

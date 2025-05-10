@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ConfiguracionModal from './src/components/ConfiguracionModal';
+import { ActivityIndicator, View } from 'react-native';
+import Toast from 'react-native-toast-message';
+
+import { AuthProvider, AuthContext } from './src/context/AuthContext';
 import Inicio from './src/screens/Inicio';
 import Busqueda from './src/screens/Buscar';
 import Fuentes from './src/screens/Fuentes';
@@ -19,54 +21,21 @@ import CambiarContrasenia from './src/screens/CambiarContrasenia';
 import NoticiaIndividual from './src/screens/NoticiaIndividual';
 import { colores } from './src/styles/globales';
 
+// Asegúrate de que el servidor de desarrollo esté ejecutándose correctamente
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
-// Stack para mostrar la noticia individual
 const NoticiaStack = createStackNavigator();
-
-function NoticiasStackScreen() {
-  return (
-    <NoticiaStack.Navigator>
-      <NoticiaStack.Screen
-        name="Home"
-        component={Tabs}
-        options={{ headerShown: false }}
-      />
-      <NoticiaStack.Screen
-        name="NoticiaIndividual"
-        component={NoticiaIndividual}
-        options={{
-          title: 'Ver más',
-          headerStyle: {
-            backgroundColor: colores.fondoNavegacion,
-          },
-          headerTintColor: colores.textoClaro,
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      />
-    </NoticiaStack.Navigator>
-  );
-}
 
 function Tabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let nombreIcono;
-
-          if (route.name === 'Inicio') {
-            nombreIcono = 'home';
-          } else if (route.name === 'Buscar') {
-            nombreIcono = 'search';
-          } else if (route.name === 'Fuentes') {
-            nombreIcono = 'layers';
-          }
-
-          return <Ionicons name={nombreIcono} size={size} color={color} />;
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
+          if (route.name === 'Inicio') iconName = 'home';
+          else if (route.name === 'Buscar') iconName = 'search';
+          else if (route.name === 'Fuentes') iconName = 'layers';
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'white',
         tabBarInactiveTintColor: 'gray',
@@ -86,44 +55,92 @@ function Tabs() {
   );
 }
 
-export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
+function NoticiasStackScreen() {
+  return (
+    <NoticiaStack.Navigator>
+      <NoticiaStack.Screen
+        name="Home"
+        component={Tabs}
+        options={{ headerShown: false }}
+      />
+      <NoticiaStack.Screen
+        name="NoticiaIndividual"
+        component={NoticiaIndividual}
+        options={{
+          title: 'Ver más',
+          headerStyle: { backgroundColor: colores.fondoNavegacion },
+          headerTintColor: colores.textoClaro,
+          headerTitleStyle: { fontWeight: 'bold' },
+        }}
+      />
+    </NoticiaStack.Navigator>
+  );
+}
 
-  useEffect(() => {
-    // Simulamos un tiempo de carga para el splash screen
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+function AppNavigator() {
+  const { user, loading } = useContext(AuthContext);
+  const [isSplashVisible, setIsSplashVisible] = useState(true);
 
-    return () => clearTimeout(timer);
-  }, []);
-
-
-  const handleSplashComplete = () => {
-    setIsLoading(false);
+  const handleAnimationComplete = () => {
+    setIsSplashVisible(false);
   };
 
-  if (isLoading) {
+  useEffect(() => {
+    // Asegurarse de que el servidor esté ejecutándose correctamente
+    const checkServerStatus = async () => {
+      try {
+        const response = await fetch('http://localhost:8081');
+        if (!response.ok) {
+          console.error('Error al conectar con el servidor');
+        }
+      } catch (error) {
+        console.error('Servidor no disponible', error);
+      }
+    };
+    checkServerStatus();
+  }, []);
+
+  if (isSplashVisible) {
+    return <SplashScreen onAnimationComplete={handleAnimationComplete} />;
+  }
+
+  if (loading) {
     return (
-      <SafeAreaProvider>
-        <SplashScreen onAnimationComplete={handleSplashComplete} />
-      </SafeAreaProvider>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1E1E1E' }}>
+        <ActivityIndicator size="large" color="white" />
+      </View>
     );
   }
 
   return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!user ? (
+          <Stack.Group>
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Registro" component={Registro} />
+          </Stack.Group>
+        ) : (
+          <Stack.Group>
+            <Stack.Screen name="MainApp" component={NoticiasStackScreen} />
+            <Stack.Screen name="Configuracion" component={Configuracion} />
+            <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
+            <Stack.Screen name="CambiarContrasenia" component={CambiarContrasenia} />
+          </Stack.Group>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+export default function App() {
+  return (
     <SafeAreaProvider>
-      <StatusBar style="light" backgroundColor="#000000" />
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Registro" component={Registro} />
-          <Stack.Screen name="MainApp" component={NoticiasStackScreen} />
-          <Stack.Screen name="Configuracion" component={Configuracion} />
-          <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
-          <Stack.Screen name="CambiarContrasenia" component={CambiarContrasenia} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <StatusBar style="light" backgroundColor="#000" />
+      <AuthProvider>
+        <AppNavigator />
+        <Toast /> {/* Agrega Toast aquí */}
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }
