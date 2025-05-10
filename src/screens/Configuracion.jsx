@@ -42,7 +42,7 @@ const Configuracion = ({ navigation }) => {
             />
             <AuthButton 
               title="Cambiar contraseña" 
-              onPress={() => console.log("Cambiar contraseña")} 
+              onPress={() => navigation.navigate('CambiarContrasenia')} 
               style={[styles.botonConfig, styles.botonFondoGris]}
             />
           </View>

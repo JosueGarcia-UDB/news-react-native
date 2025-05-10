@@ -15,6 +15,7 @@ import SplashScreen from './src/screens/auth/SplashScreen';
 import Login from './src/screens/auth/Login';
 import Registro from './src/screens/auth/Registro';
 import EditarPerfil from './src/screens/EditarPerfil';
+import CambiarContrasenia from './src/screens/CambiarContrasenia';
 import { colores } from './src/styles/globales';
 
 const Tab = createBottomTabNavigator();
@@ -90,6 +91,7 @@ export default function App() {
           <Stack.Screen name="MainApp" component={Tabs} />
           <Stack.Screen name="Configuracion" component={Configuracion} />
           <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
+          <Stack.Screen name="CambiarContrasenia" component={CambiarContrasenia} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
