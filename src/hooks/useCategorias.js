@@ -36,7 +36,7 @@ const useCategorias = () => {
     };
 
     cargarPreferencias();
-  }, [user]);
+  }, [user]); // Escucha cambios en el usuario
 
   const toggleCategoria = async (id) => {
     const nuevasCategorias = categorias.map(cat =>

@@ -108,20 +108,32 @@ export const AuthProvider = ({ children }) => {
     try {
       const oldUserKey = `user_${user.username}`;
       const newUserKey = `user_${newUsername}`;
+      const oldPrefsKey = `prefs_${user.username}`;
+      const newPrefsKey = `prefs_${newUsername}`;
 
+      // Verificar si el nuevo nombre de usuario ya está en uso
       if (newUsername !== user.username && (await AsyncStorage.getItem(newUserKey))) {
         throw new Error('El nuevo nombre de usuario ya está en uso');
       }
 
+      // Migrar las preferencias del usuario
+      const oldPreferences = await AsyncStorage.getItem(oldPrefsKey);
+      if (oldPreferences) {
+        await AsyncStorage.setItem(newPrefsKey, oldPreferences);
+        await AsyncStorage.removeItem(oldPrefsKey); // Eliminar las preferencias antiguas
+      }
+
+      // Actualizar los datos del usuario
       const updatedUser = { ...user, name: newName, username: newUsername };
       await AsyncStorage.setItem(newUserKey, JSON.stringify(updatedUser));
 
       if (newUsername !== user.username) {
-        await AsyncStorage.removeItem(oldUserKey);
+        await AsyncStorage.removeItem(oldUserKey); // Eliminar los datos del usuario antiguo
       }
 
       setUser(updatedUser);
 
+      // Actualizar el nombre de usuario en SecureStore o AsyncStorage
       if (Platform.OS === 'web') {
         await AsyncStorage.setItem('userLogged', newUsername);
       } else {

@@ -1,53 +1,56 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import AuthInput   from '../../components/AuthInput';
-import AuthButton  from '../../components/AuthButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { setError, clearError, clearAllErrors } from '../../redux/validationSlice';
+import AuthInput from '../../components/AuthInput';
+import AuthButton from '../../components/AuthButton';
 import { colores, tipografia, espaciados, estilosComunes } from '../../styles/globales';
-import { AuthContext } from '../../context/AuthContext';
 import Toast from 'react-native-toast-message';
+import { AuthContext } from '../../context/AuthContext'; 
 
 const Registro = () => {
-  const nav         = useNavigation();
-  const { register, user } = useContext(AuthContext);
-  const [name, setName] = useState('');
-  const [u, setU]       = useState('');
-  const [p, setP]       = useState('');
-  const [cp, setCP]     = useState('');
+  const nav = useNavigation();
+  const dispatch = useDispatch();
+  const errors = useSelector((state) => state.validation.errors);
+  const { register } = useContext(AuthContext); 
 
-  // Al detectar user (por auto-login o manual), vuelve al login
-  useEffect(() => {
-    if (user) {
-      Toast.show({
-        type: 'success',
-        text1: '¡Bienvenido!',
-        text2: 'Tu cuenta se creó con éxito',
-      });
-      nav.navigate('Login');
+  const [name, setName] = useState('');
+  const [u, setU] = useState('');
+  const [p, setP] = useState('');
+  const [cp, setCP] = useState('');
+
+  const validateFields = () => {
+    dispatch(clearAllErrors());
+
+    if (!name.trim()) {
+      dispatch(setError({ field: 'name', message: 'El nombre es obligatorio' }));
     }
-  }, [user]);
+    if (!u.trim()) {
+      dispatch(setError({ field: 'username', message: 'El usuario es obligatorio' }));
+    }
+    if (!p.trim()) {
+      dispatch(setError({ field: 'password', message: 'La contraseña es obligatoria' }));
+    }
+    if (p !== cp) {
+      dispatch(setError({ field: 'confirmPassword', message: 'Las contraseñas no coinciden' }));
+    }
+
+    return Object.keys(errors).length === 0;
+  };
 
   const handleReg = async () => {
-    if (!name.trim() || !u.trim() || !p.trim() || !cp.trim()) {
+    if (!validateFields()) {
       Toast.show({
         type: 'error',
         text1: '⚠️ Error',
-        text2: 'Todos los campos son obligatorios',
-      });
-      return;
-    }
-
-    if (p !== cp) {
-      Toast.show({
-        type: 'error',
-        text1: '🔒 Error',
-        text2: 'Las contraseñas no coinciden',
+        text2: 'Por favor corrige los errores antes de continuar',
       });
       return;
     }
 
     try {
-      await register(name.trim(), u.trim(), p.trim());
+      await register(name.trim(), u.trim(), p.trim()); // Usar el contexto para registrar
       Toast.show({
         type: 'success',
         text1: '✅ Registro completo',
@@ -55,19 +58,11 @@ const Registro = () => {
       });
       nav.navigate('Login');
     } catch (e) {
-      if (e.message === 'El usuario ya existe') {
-        Toast.show({
-          type: 'error',
-          text1: '❌ Error',
-          text2: 'El nombre de usuario ya está en uso',
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: '⚠️ Error',
-          text2: e.message || 'Error desconocido',
-        });
-      }
+      Toast.show({
+        type: 'error',
+        text1: '⚠️ Error',
+        text2: e.message || 'Error desconocido',
+      });
     }
   };
 
@@ -76,10 +71,44 @@ const Registro = () => {
       <View style={styles.form}>
         <Text style={styles.title}>INFONOW</Text>
         <Text style={styles.subtitle}>Registrarse</Text>
-        <AuthInput placeholder="Nombre" value={name} onChangeText={setName} />
-        <AuthInput placeholder="Usuario" value={u} onChangeText={setU} />
-        <AuthInput placeholder="Contraseña" secureTextEntry value={p} onChangeText={setP} />
-        <AuthInput placeholder="Confirmar contraseña" secureTextEntry value={cp} onChangeText={setCP} />
+        <AuthInput
+          placeholder="Nombre"
+          value={name}
+          onChangeText={(text) => {
+            setName(text);
+            dispatch(clearError({ field: 'name' }));
+          }}
+        />
+        {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+        <AuthInput
+          placeholder="Usuario"
+          value={u}
+          onChangeText={(text) => {
+            setU(text);
+            dispatch(clearError({ field: 'username' }));
+          }}
+        />
+        {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+        <AuthInput
+          placeholder="Contraseña"
+          secureTextEntry
+          value={p}
+          onChangeText={(text) => {
+            setP(text);
+            dispatch(clearError({ field: 'password' }));
+          }}
+        />
+        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+        <AuthInput
+          placeholder="Confirmar contraseña"
+          secureTextEntry
+          value={cp}
+          onChangeText={(text) => {
+            setCP(text);
+            dispatch(clearError({ field: 'confirmPassword' }));
+          }}
+        />
+        {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
         <AuthButton title="Crear cuenta" onPress={handleReg} />
         <View style={styles.linkRow}>
           <Text style={styles.textNormal}>¿Ya tienes cuenta?</Text>
@@ -94,7 +123,8 @@ const Registro = () => {
 
 const styles = StyleSheet.create({
   form: {
-    width: '80%', alignItems: 'center'
+    width: '80%',
+    alignItems: 'center',
   },
   title: {
     color: colores.textoClaro,
@@ -109,14 +139,23 @@ const styles = StyleSheet.create({
     marginBottom: espaciados.medio,
     alignSelf: 'flex-start',
   },
+  errorText: {
+    color: 'red',
+    fontSize: tipografia.tamaños.pequeño,
+    marginBottom: espaciados.pequeño,
+    alignSelf: 'flex-start',
+  },
   linkRow: {
-    flexDirection: 'row', marginTop: espaciados.pequeño,
+    flexDirection: 'row',
+    marginTop: espaciados.pequeño,
   },
   textNormal: {
-    color: colores.textoSecundario, marginRight: espaciados.pequeño
+    color: colores.textoSecundario,
+    marginRight: espaciados.pequeño,
   },
   textLink: {
-    color: colores.primario, fontWeight: tipografia.pesos.semiBold
+    color: colores.primario,
+    fontWeight: tipografia.pesos.semiBold,
   },
 });
 

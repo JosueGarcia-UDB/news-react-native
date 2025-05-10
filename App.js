@@ -7,6 +7,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ActivityIndicator, View } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { Provider } from 'react-redux';
+import store from './src/redux/store';
 
 import { AuthProvider, AuthContext } from './src/context/AuthContext';
 import Inicio from './src/screens/Inicio';
@@ -135,12 +137,14 @@ function AppNavigator() {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <StatusBar style="light" backgroundColor="#000" />
-      <AuthProvider>
-        <AppNavigator />
-        <Toast /> {/* Agrega Toast aquí */}
-      </AuthProvider>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <StatusBar style="light" backgroundColor="#000" />
+        <AuthProvider>
+          <AppNavigator />
+          <Toast /> {/* Agrega Toast aquí */}
+        </AuthProvider>
+      </SafeAreaProvider>
+    </Provider>
   );
 }
