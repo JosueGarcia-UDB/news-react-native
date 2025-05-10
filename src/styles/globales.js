@@ -5,6 +5,8 @@ export const colores = {
   primario: '#ff3b30',
   fondoOscuro: '#121212',
   fondoTarjeta: '#252525',
+  fondo: '#121212',
+  fondoNavegacion: '#1c1c1c',
   textoClaro: '#ffffff',
   textoSecundario: '#cccccc',
   textoTerciario: '#888888',

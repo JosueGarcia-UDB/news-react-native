@@ -16,10 +16,40 @@ import Login from './src/screens/auth/Login';
 import Registro from './src/screens/auth/Registro';
 import EditarPerfil from './src/screens/EditarPerfil';
 import CambiarContrasenia from './src/screens/CambiarContrasenia';
+import NoticiaIndividual from './src/screens/NoticiaIndividual';
 import { colores } from './src/styles/globales';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+// Stack para mostrar la noticia individual
+const NoticiaStack = createStackNavigator();
+
+function NoticiasStackScreen() {
+  return (
+    <NoticiaStack.Navigator>
+      <NoticiaStack.Screen
+        name="Home"
+        component={Tabs}
+        options={{ headerShown: false }}
+      />
+      <NoticiaStack.Screen
+        name="NoticiaIndividual"
+        component={NoticiaIndividual}
+        options={{
+          title: 'Ver más',
+          headerStyle: {
+            backgroundColor: colores.fondoNavegacion,
+          },
+          headerTintColor: colores.textoClaro,
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
+    </NoticiaStack.Navigator>
+  );
+}
 
 function Tabs() {
   return (
@@ -66,14 +96,14 @@ export default function App() {
     }, 3000);
 
     return () => clearTimeout(timer);
-    }, []);
+  }, []);
 
 
   const handleSplashComplete = () => {
     setIsLoading(false);
   };
 
-  if (isLoading){
+  if (isLoading) {
     return (
       <SafeAreaProvider>
         <SplashScreen onAnimationComplete={handleSplashComplete} />
@@ -85,10 +115,10 @@ export default function App() {
     <SafeAreaProvider>
       <StatusBar style="light" backgroundColor="#000000" />
       <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="Registro" component={Registro} />
-          <Stack.Screen name="MainApp" component={Tabs} />
+          <Stack.Screen name="MainApp" component={NoticiasStackScreen} />
           <Stack.Screen name="Configuracion" component={Configuracion} />
           <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
           <Stack.Screen name="CambiarContrasenia" component={CambiarContrasenia} />

@@ -1,28 +1,39 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Linking } from 'react-native';
-import { colores, tipografia, espaciados } from '../styles/globales.js';
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
+import { colores, tipografia, espaciados } from "../styles/globales.js";
+import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 
 const TarjetaNoticia = ({ noticia = {} }) => {
+  const navigation = useNavigation();
+
   // Si 'noticia' es un array, extraemos el objeto (normalmente en la posición 1)
   const noticiaData = Array.isArray(noticia) ? noticia[1] : noticia;
 
-  const { 
-    title = '', 
-    description = '', 
+  const {
+    title = "",
+    description = "",
     urlToImage = null,
-    url = '',
-    publishedAt = '',
-    categoria = ''
+    url = "",
+    publishedAt = "",
+    categoria = "",
   } = noticiaData;
-  
-  const sourceName = noticiaData?.source?.name || 'Fuente desconocida';
-  const fechaPublicacion = publishedAt ? new Date(publishedAt).toLocaleDateString() : '';
-  
-  // Manejar apertura de URL
-  const abrirNoticia = () => {
-    if (url) {
-      Linking.openURL(url).catch(err => console.error('Error al abrir URL:', err));
-    }
+
+  const sourceName = noticiaData?.source?.name || "Fuente desconocida";
+  const fechaPublicacion = publishedAt
+    ? new Date(publishedAt).toLocaleDateString()
+    : "";
+
+  // Manejar navegación a la pantalla de detalles
+  const verDetalles = () => {
+    navigation.navigate("NoticiaIndividual", { noticia: noticiaData });
   };
 
   return (
@@ -30,7 +41,9 @@ const TarjetaNoticia = ({ noticia = {} }) => {
       {/* Encabezado con fuente y fecha */}
       <View style={styles.encabezado}>
         <Text style={styles.fuente}>{sourceName}</Text>
-        {fechaPublicacion && <Text style={styles.fecha}>{fechaPublicacion}</Text>}
+        {fechaPublicacion && (
+          <Text style={styles.fecha}>{fechaPublicacion}</Text>
+        )}
       </View>
 
       {/* Categoría (si existe) */}
@@ -46,21 +59,27 @@ const TarjetaNoticia = ({ noticia = {} }) => {
       {/* Imagen de la noticia (si existe) */}
       {urlToImage && (
         <View style={styles.contenedorImagen}>
-          <Image 
-            source={{ uri: urlToImage }} 
+          <Image
+            source={{ uri: urlToImage }}
             style={styles.imagen}
             resizeMode="cover"
-            defaultSource={require('../assets/img/placeholder.png')} // Placeholder si la imagen no carga
+            defaultSource={require("../assets/img/placeholder.png")} // Placeholder si la imagen no carga
+          />
+          <LinearGradient
+            colors={["rgba(18, 18, 18, 0)", "rgba(18, 18, 18, 0.8)"]}
+            style={styles.gradiente}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
           />
         </View>
       )}
 
-      {/* Descripción y botón "Leer más" */}
+      {/* Descripción y botón "Ver detalles" */}
       {description && (
         <>
           <Text style={styles.descripcion}>{description}</Text>
-          <TouchableOpacity style={styles.boton} onPress={abrirNoticia}>
-            <Text style={styles.textoBoton}>Leer más</Text>
+          <TouchableOpacity style={styles.boton} onPress={verDetalles}>
+            <Text style={styles.textoBoton}>Ver detalles</Text>
           </TouchableOpacity>
         </>
       )}
@@ -73,18 +92,18 @@ const styles = StyleSheet.create({
     backgroundColor: colores.fondoTarjeta,
     borderRadius: espaciados.radioBorde.medio,
     marginBlock: espaciados.pequeño,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   encabezado: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: espaciados.base,
     marginBottom: espaciados.pequeño,
   },
   fuente: {
     color: colores.textoSecundario,
-    fontSize: tipografia.tamaños.normal, 
+    fontSize: tipografia.tamaños.normal,
     flex: 1,
     marginRight: espaciados.pequeño,
   },
@@ -93,13 +112,13 @@ const styles = StyleSheet.create({
     fontSize: tipografia.tamaños.normal,
   },
   categoriaContainer: {
-    backgroundColor: colores.primario, 
-    alignSelf: 'flex-start',
+    backgroundColor: colores.primario,
+    alignSelf: "flex-start",
     paddingHorizontal: espaciados.pequeño,
     paddingVertical: espaciados.minimo,
     borderRadius: espaciados.radioBorde.completo,
     marginLeft: espaciados.base,
-    marginBottom: espaciados.medio
+    marginBottom: espaciados.medio,
   },
   categoriaTexto: {
     color: colores.textoBoton,
@@ -124,16 +143,25 @@ const styles = StyleSheet.create({
   contenedorImagen: {
     height: 180,
     backgroundColor: colores.borde,
+    position: "relative",
   },
   imagen: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  gradiente: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    height: "100%",
   },
   boton: {
     backgroundColor: colores.boton,
     borderRadius: espaciados.radioBorde.completo,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginLeft: espaciados.base,
     marginBottom: espaciados.medio,
     paddingHorizontal: espaciados.medio,
