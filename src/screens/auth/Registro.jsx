@@ -23,24 +23,30 @@ const Registro = () => {
   const validateFields = () => {
     dispatch(clearAllErrors());
 
+    let hasError = false;
+
     if (!name.trim()) {
       dispatch(setError({ field: 'name', message: 'El nombre es obligatorio' }));
+      hasError = true;
     }
     if (!u.trim()) {
       dispatch(setError({ field: 'username', message: 'El usuario es obligatorio' }));
+      hasError = true;
     }
     if (!p.trim()) {
       dispatch(setError({ field: 'password', message: 'La contraseña es obligatoria' }));
+      hasError = true;
     }
     if (p !== cp) {
       dispatch(setError({ field: 'confirmPassword', message: 'Las contraseñas no coinciden' }));
+      hasError = true;
     }
 
-    return Object.keys(errors).length === 0;
+    return hasError;
   };
 
   const handleReg = async () => {
-    if (!validateFields()) {
+    if (validateFields()) {
       Toast.show({
         type: 'error',
         text1: '⚠️ Error',
