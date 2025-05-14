@@ -14,11 +14,11 @@
     "slug": "noticias",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/img/logo.png",
+    "icon": "./src/assets/img/logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/img/logo.png",
+      "image": "./src/assets/img/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#121212"
     },
@@ -27,7 +27,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/img/favicon.png",
+        "foregroundImage": "./src/assets/img/favicon.png",
         "backgroundColor": "#ffffff"
       }
     },

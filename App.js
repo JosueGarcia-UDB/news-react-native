@@ -12,6 +12,8 @@ import store from './src/redux/store';
 
 import { AuthProvider, AuthContext } from './src/context/AuthContext';
 import Inicio from './src/screens/Inicio';
+import { getBiometricPreference } from './src/utils/biometrics';
+import * as LocalAuthentication from 'expo-local-authentication';
 import Busqueda from './src/screens/Buscar';
 import Fuentes from './src/screens/Fuentes';
 import Configuracion from './src/screens/Configuracion';
@@ -21,12 +23,15 @@ import Registro from './src/screens/auth/Registro';
 import EditarPerfil from './src/screens/EditarPerfil';
 import CambiarContrasenia from './src/screens/CambiarContrasenia';
 import NoticiaIndividual from './src/screens/NoticiaIndividual';
+import Bloqueado from './src/screens/auth/Bloqueado';
 import { colores } from './src/styles/globales';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Asegúrate de que el servidor de desarrollo esté ejecutándose correctamente
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const NoticiaStack = createStackNavigator();
+
 
 function Tabs() {
   return (
@@ -81,30 +86,7 @@ function NoticiasStackScreen() {
 
 function AppNavigator() {
   const { user, loading } = useContext(AuthContext);
-  const [isSplashVisible, setIsSplashVisible] = useState(true);
-
-  const handleAnimationComplete = () => {
-    setIsSplashVisible(false);
-  };
-
-  useEffect(() => {
-    // Asegurarse de que el servidor esté ejecutándose correctamente
-    const checkServerStatus = async () => {
-      try {
-        const response = await fetch('http://localhost:8081');
-        if (!response.ok) {
-          console.error('Error al conectar con el servidor');
-        }
-      } catch (error) {
-        console.error('Servidor no disponible', error);
-      }
-    };
-    checkServerStatus();
-  }, []);
-
-  if (isSplashVisible) {
-    return <SplashScreen onAnimationComplete={handleAnimationComplete} />;
-  }
+  
 
   if (loading) {
     return (
@@ -125,17 +107,55 @@ function AppNavigator() {
         ) : (
           <Stack.Group>
             <Stack.Screen name="MainApp" component={NoticiasStackScreen} />
-            <Stack.Screen name="Configuracion" component={Configuracion} />
-            <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
-            <Stack.Screen name="CambiarContrasenia" component={CambiarContrasenia} />
+            <Stack.Screen name="Configuracion" component={Configuracion} options={{ title: 'Configuración',headerShown: true, headerStyle: { backgroundColor: colores.fondoNavegacion }, headerTintColor: colores.textoClaro, headerTitleStyle: { fontWeight: 'bold' } }} />
+            <Stack.Screen name="EditarPerfil" component={EditarPerfil} options={{  title: 'Editar perfil',headerShown: true, headerStyle: { backgroundColor: colores.fondoNavegacion }, headerTintColor: colores.textoClaro, headerTitleStyle: { fontWeight: 'bold' } }}/>
+            <Stack.Screen name="CambiarContrasenia" component={CambiarContrasenia} options={{  title: 'Cambiar contraseña', headerShown: true, headerStyle: { backgroundColor: colores.fondoNavegacion }, headerTintColor: colores.textoClaro, headerTitleStyle: { fontWeight: 'bold' } }}/>
           </Stack.Group>
         )}
+        <Stack.Screen name="Bloqueado" component={Bloqueado} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
 export default function App() {
+  const [bloqueado, setBloqueado] = useState(false);
+  const [isSplashVisible, setIsSplashVisible] = useState(true);
+
+  const checkBiometricOnLaunch = async () => {  //Revisa si hay biometría habilitada al iniciar la app
+    const enabled = await getBiometricPreference();
+    if (enabled) { //si esta habilitada la biometria, pide la huella y bloquea la app con la vista <Bloqueado />
+      setBloqueado(true);
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: 'Usa tu huella para ingresar',
+      });
+      if (result.success) {
+        setBloqueado(false);
+      }
+    } else {
+      setBloqueado(false);
+    }
+  };
+
+  useEffect(() => {
+    checkBiometricOnLaunch();
+  }, []);
+
+  const handleAnimationComplete = () => {
+    setIsSplashVisible(false);
+  };
+
+
+  if (isSplashVisible) {
+    return <SplashScreen onAnimationComplete={handleAnimationComplete} />;
+  }
+
+  if(bloqueado) {
+    return (
+      <Bloqueado checkBiometricOnLaunch={checkBiometricOnLaunch} />
+    )
+  }
+
   return (
     <Provider store={store}>
       <SafeAreaProvider>
