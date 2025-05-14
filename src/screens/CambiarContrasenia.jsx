@@ -53,12 +53,7 @@ const CambiarContrasenia = () => {
 
   return (
     <SafeAreaView style={styles.contenedor}>
-      <View style={styles.cabecera}>
-        <TouchableOpacity style={styles.botonAtras} onPress={() => navigation.goBack()}>
-          <Text style={styles.iconoAtras}>←</Text>
-          <Text style={styles.textoAtras}>Cambiar Contraseña</Text>
-        </TouchableOpacity>
-      </View>
+     
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contenido}>
         <AuthInput
           placeholder="Contraseña anterior"
@@ -83,6 +78,7 @@ const CambiarContrasenia = () => {
             title="Confirmar cambios"
             onPress={handleChange}
             style={styles.botonGuardar}
+            
           />
         </View>
       </ScrollView>
@@ -94,27 +90,6 @@ const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
     backgroundColor: '#1E1E1E',
-    marginTop: Platform.OS === 'ios' ? 0 : 20,
-  },
-  cabecera: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
-  },
-  botonAtras: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconoAtras: {
-    fontSize: 24,
-    marginRight: 10,
-    color: 'white',
-  },
-  textoAtras: {
-    fontSize: 18,
-    color: 'white',
   },
   scrollView: {
     flex: 1,
@@ -130,7 +105,7 @@ const styles = StyleSheet.create({
     width: '80%', 
     paddingVertical: 12,
     borderRadius: 10,
-    backgroundColor: '#BA1816',
+    color: 'white',
   },
 });
 

@@ -61,12 +61,6 @@ const EditarPerfil = () => {
 
   return (
     <SafeAreaView style={styles.contenedor}>
-      <View style={styles.cabecera}>
-        <TouchableOpacity style={styles.botonAtras} onPress={() => navigation.goBack()}>
-          <Text style={styles.iconoAtras}>←</Text>
-          <Text style={styles.textoAtras}>Editar Perfil</Text>
-        </TouchableOpacity>
-      </View>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contenido}>
         <AuthInput placeholder="Nombre" value={nombre} onChangeText={setNombre} />
         <AuthInput placeholder="Usuario" value={usuario} onChangeText={setUsuario} />
@@ -89,7 +83,7 @@ const EditarPerfil = () => {
 };
 
 const styles = StyleSheet.create({
-  contenedor: { flex: 1, backgroundColor: '#1E1E1E', marginTop: Platform.OS === 'ios' ? 0 : 20 },
+  contenedor: { flex: 1, backgroundColor: '#1E1E1E'},
   cabecera: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -110,7 +104,6 @@ const styles = StyleSheet.create({
     width: '80%', 
     paddingVertical: 12,
     borderRadius: 10,
-    backgroundColor: '#BA1816',
   },
   botonCerrarSesion: { backgroundColor: '#BA1816' },
 });

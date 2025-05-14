@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     marginTop: espaciados.medio,
   },
   categoriaTexto: {
-    color: colores.textoBoton,
+    color: colores.textoClaro,
     fontSize: tipografia.tamaños.pequeño,
     fontWeight: tipografia.pesos.negrita,
   },

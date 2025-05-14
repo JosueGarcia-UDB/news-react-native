@@ -12,14 +12,14 @@ const AuthButton = ({ title, onPress, style }) => {
 const styles = StyleSheet.create({
   boton: {
     backgroundColor: colores.primario,
-    padding: espaciados.medio,
-    borderRadius: espaciados.radioBorde.completo,
+    padding: espaciados.base,
+    borderRadius: espaciados.radioBorde.medio,
     alignItems: "center",
     width: "100%",
     marginVertical: espaciados.pequeño,
   },
   textoBoton: {
-    color: colores.textoBoton,
+    color: colores.textoClaro,
     fontSize: tipografia.tamaños.medio,
     fontWeight: tipografia.pesos.semiBold,
   },
