@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { REACT_APP_API_KEY_NEWS_DATA } from '@env';
 
-const API_KEY_NEWS_DATA = 'pub_849140b198830610b8569985dee2f2899bc2a';
+const API_KEY_NEWS_DATA = REACT_APP_API_KEY_NEWS_DATA;
 const URL_API_NEWS_DATA = 'https://newsdata.io/api/1/latest';
 
 const countryNameToCode = {
@@ -32,7 +33,7 @@ export function useNoticiaLocal() {
       }
       try {
         const countryCode = countryNameToCode[user.country] || user.country.toLowerCase();
-        const url = `${URL_API_NEWS_DATA}?country=sv&apikey=${API_KEY_NEWS_DATA}&language=es&category=top`;
+        const url = `${URL_API_NEWS_DATA}?country=${countryCode}&apikey=${API_KEY_NEWS_DATA}&language=en&category=top`;
         console.log(url);
         const response = await fetch(url);
         const data = await response.json();

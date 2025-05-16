@@ -40,7 +40,7 @@ const NoticiaLocalCard = ({ noticia }) => {
   };
 
   // Función para normalizar la descripción a aproximadamente 200 palabras
-  const normalizarDescripcion = (texto, longitudObjetivo = 30) => {
+  const normalizarDescripcion = (texto, longitudObjetivo = 20) => {
     const palabras = texto.trim().split(/\s+/);
 
     // Si ya tiene 200 o más palabras, recortamos
@@ -51,7 +51,6 @@ const NoticiaLocalCard = ({ noticia }) => {
     // Si tiene menos, repetimos o rellenamos con texto neutro
     const palabrasFaltantes = longitudObjetivo - palabras.length;
     const relleno = Array(palabrasFaltantes)
-      .fill("Esta es información adicional para mantener la uniformidad.")
       .join(" ");
     return texto + " " + relleno;
   };
@@ -137,12 +136,12 @@ const CarruselNoticias = ({ noticias = [], loading, error }) => {
 
 const styles = StyleSheet.create({
   loaderContainer: {
-    height: 250,
+    height: 'auto',
     justifyContent: "center",
     alignItems: "center",
   },
   errorContainer: {
-    height: 250,
+    height: 'auto',
     justifyContent: "center",
     alignItems: "center",
   },
@@ -152,7 +151,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   emptyContainer: {
-    height: 250,
+    height: 'auto',
     justifyContent: "center",
     alignItems: "center",
   },
@@ -162,7 +161,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   flatListContent: {
-    paddingHorizontal: espaciados.margenContenedor,
     alignItems: "center",
   },
   cardContainer: {
@@ -173,13 +171,12 @@ const styles = StyleSheet.create({
     backgroundColor: colores.fondoTarjeta,
     borderRadius: espaciados.radioBorde.medio,
     marginVertical: espaciados.pequeño,
-    minHeight: 550,
+    minHeight: 400,
     overflow: 'hidden',
-    width: '100%',
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 170,
     backgroundColor: colores.borde,
   },
   placeholderImage: {
@@ -220,7 +217,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: colores.boton,
     borderRadius: espaciados.radioBorde.completo,
-    alignSelf: "flex-start",
+    alignSelf: "center",
     paddingHorizontal: espaciados.medio,
     paddingVertical: espaciados.pequeño,
   },

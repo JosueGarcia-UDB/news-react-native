@@ -8,6 +8,7 @@ import {
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
+  ScrollView
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
@@ -119,54 +120,64 @@ const Inicio = ({ navigation, route }) => {
     );
   }
 
+  // Renderizar el carrusel como un componente separado para la sección superior
+  const renderCarrusel = () => (
+    <View style={styles.carrusel}>
+      <Text style={styles.tituloCarrusel}>
+        Lo más destacado en {user.country}
+      </Text>
+      <CarruselNoticias
+        noticias={localNoticias}
+        loading={localLoading}
+        error={localError}
+      />
+    </View>
+  );
+
+  // Renderizar el encabezado de la sección de noticias por categoría
+  const renderNoticiasCategoriaHeader = () => (
+    <>
+      <Text style={styles.tituloSeccion}>
+        Lo más destacado en lo que te gusta
+      </Text>
+      {renderUltimaActualizacion()}
+    </>
+  );
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.contenedor}>
         <Header />
-
-        <View style={styles.carrusel}>
-          {/* Título para el carrusel */}
-          <Text style={styles.tituloCarrusel}>
-            Lo más destacado en México
-          </Text>
-          <CarruselNoticias
-            noticias={localNoticias}
-            loading={localLoading}
-            error={localError}
-          />
-        </View>
-
-        <View style={styles.contenedorFlatList}>
-          <FlatList
-            style={styles.flatList}
-            contentContainerStyle={styles.contenido}
-            data={noticias}
-            renderItem={({ item }) => <TarjetaNoticia noticia={item} />}
-            keyExtractor={(item, index) => `${item.url || item.title}-${index}`}
-            ListHeaderComponent={
-              <>
-                <Text style={styles.tituloSeccion}>
-                  Lo más destacado en lo que te gusta
-                </Text>
-                {renderUltimaActualizacion()}
-              </>
-            }
-            ListEmptyComponent={
+        
+        <FlatList
+          style={styles.flatList}
+          contentContainerStyle={styles.contenido}
+          data={noticias}
+          renderItem={({ item }) => <TarjetaNoticia noticia={item} />}
+          keyExtractor={(item, index) => `${item.url || item.title}-${index}`}
+          ListHeaderComponent={
+            <>
+              {renderCarrusel()}
+              {renderNoticiasCategoriaHeader()}
+            </>
+          }
+          ListEmptyComponent={
+            noticias.length === 0 && (
               <Text style={styles.sinNoticias}>
                 No hay noticias disponibles. Por favor, selecciona algunas
                 categorías en la configuración.
               </Text>
-            }
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                colors={[colores.textoClaro]}
-                tintColor={colores.textoClaro}
-              />
-            }
-          />
-        </View>
+            )
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[colores.textoClaro]}
+              tintColor={colores.textoClaro}
+            />
+          }
+        />
 
         <ConfiguracionModal
           visible={showConfigModal}
@@ -182,8 +193,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colores.fondoOscuro,
   },
-  contenedorFlatList: {
-    margin: espaciados.margenContenedor,
+  flatList: {
+    flex: 1,
+  },
+  contenido: {
+    padding: espaciados.margenContenedor,
   },
   cargando: {
     flex: 1,
@@ -214,37 +228,34 @@ const styles = StyleSheet.create({
     fontWeight: tipografia.pesos.medio,
   },
   tituloSeccion: {
-    color: colores.textoClaro,
-    textAlign: "center",
     fontSize: tipografia.tamaños.extraGrande,
     fontWeight: tipografia.pesos.negrita,
-    marginTop: 0,
-    marginBlock: espaciados.base,
-    paddingHorizontal: espaciados.base,
+    color: colores.textoClaro,
+    marginTop: espaciados.grande,
+    marginBottom: espaciados.base,
   },
   sinNoticias: {
     color: colores.textoClaro,
     fontSize: tipografia.tamaños.medio,
     textAlign: "center",
-    padding: espaciados.base,
+    marginTop: espaciados.grande,
   },
   ultimaActualizacion: {
-    color: colores.textoTerciario,
+    color: colores.textoSecundario,
     fontSize: tipografia.tamaños.pequeño,
-    textAlign: "center",
-    marginBottom: espaciados.medio,
-  },
-  tituloCarrusel: {
-    color: colores.textoClaro,
-    textAlign: "center",
-    fontSize: tipografia.tamaños.extraGrande,
-    fontWeight: tipografia.pesos.negrita,
-    marginTop: espaciados.base,
     marginBottom: espaciados.base,
   },
+  tituloCarrusel: {
+    fontSize: tipografia.tamaños.extraGrande,
+    fontWeight: tipografia.pesos.negrita,
+    color: colores.textoClaro,
+    marginTop: espaciados.base,
+    marginBottom: espaciados.base,
+    textAlign: "center",
+  },
   carrusel: {
-    height: 'auto',
-  }
+    height: "auto",
+  },
 });
 
 export default Inicio;

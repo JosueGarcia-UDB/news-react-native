@@ -1,10 +1,11 @@
 import { useState } from 'react';
+import { REACT_APP_API_KEY_NEWSAPI } from '@env';
 
 export const useNuevaBusqueda = () => {
   const [resultados, setResultados] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
-  const API_KEY = '074708e3af494bc8960fe054b4557298';
+  const API_KEY = REACT_APP_API_KEY_NEWSAPI;
 
   const realizarBusqueda = async (parametros) => {
     setCargando(true);

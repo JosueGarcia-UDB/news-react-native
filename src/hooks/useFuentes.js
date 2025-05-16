@@ -1,7 +1,8 @@
 // hooks/useFuentes.js
 import { useState, useEffect } from 'react';
+import { REACT_APP_API_KEY_NEWSAPI } from '@env';
 
-const API_KEY = '074708e3af494bc8960fe054b4557298';
+const API_KEY = REACT_APP_API_KEY_NEWSAPI;
 
 const useFuentes = () => {
   const [sections, setSections] = useState([]);
