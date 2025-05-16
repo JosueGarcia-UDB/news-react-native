@@ -1,58 +1,120 @@
-import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import AuthInput from '../../components/AuthInput';
-import AuthButton from '../../components/AuthButton';
-import { colores, tipografia, espaciados, estilosComunes } from '../../styles/globales';
-import { AuthContext } from '../../context/AuthContext';
-import Toast from 'react-native-toast-message';
+import React, { useState, useContext } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import AuthInput from "../../components/AuthInput";
+import AuthButton from "../../components/AuthButton";
+import {
+  colores,
+  tipografia,
+  espaciados,
+  estilosComunes,
+} from "../../styles/globales";
+import { AuthContext } from "../../context/AuthContext";
+import Toast from "react-native-toast-message";
+import useCurrentLocation from "../../hooks/useCurrentLocation";
 
 const Login = () => {
   const navigation = useNavigation();
-  const { login, user, loading } = useContext(AuthContext);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const { login, user, loading, updateUserCountry } = useContext(AuthContext);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const { getCurrentLocation } = useCurrentLocation();
 
   // Redirección mejorada
   React.useEffect(() => {
     if (user && !loading) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainApp' }]
-      });
+      // Si el usuario ya tiene un país asociado, redirige directamente
+      if (user.country) {
+        navigation.reset({
+          routes: [{ name: "Inicio" }],
+        });
+      } else {
+        // Si es la primera vez, solicita ubicación
+        requestLocationPermission();
+      }
     }
   }, [user, loading]);
+
+  const requestLocationPermission = () => {
+    Alert.alert(
+      "Permiso de ubicación",
+      "¿Nos permites acceder a tu ubicación para mostrarte noticias de tu país?",
+      [
+        {
+          text: "No, gracias",
+          onPress: () => {
+            // Si el usuario rechaza, navegamos normalmente sin guardar país
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Inicio" }],
+            });
+          },
+          style: "cancel",
+        },
+        {
+          text: "Sí, permitir",
+          onPress: handleGetLocation,
+        },
+      ]
+    );
+  };
+
+  const handleGetLocation = async () => {
+    if (!user) return;
+
+    try {
+      const locationData = await getCurrentLocation(false); // No mostrar alerta adicional
+
+      if (locationData && locationData.country) {
+        // Actualiza el usuario con el país
+        await updateUserCountry(locationData.country);
+      }
+
+      // Redirecciona después de obtener (o intentar obtener) la ubicación
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
+    } catch (error) {
+      console.error("Error obteniendo ubicación:", error);
+      // Redirigir de todos modos incluso si hay error
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
+    }
+  };
 
   const handleLogin = async () => {
     try {
       if (!username.trim() || !password.trim()) {
         Toast.show({
-          type: 'error',
-          text1: '⚠️ Error',
-          text2: 'Todos los campos son obligatorios',
+          type: "error",
+          text1: "⚠️ Error",
+          text2: "Todos los campos son obligatorios",
         });
         return;
       }
 
       await login(username.trim(), password.trim());
     } catch (error) {
-      if (error.message === 'Usuario no encontrado') {
+      if (error.message === "Usuario no encontrado") {
         Toast.show({
-          type: 'error',
-          text1: '❌ Error',
-          text2: 'El usuario no existe',
+          type: "error",
+          text1: "❌ Error",
+          text2: "El usuario no existe",
         });
-      } else if (error.message === 'Contraseña incorrecta') {
+      } else if (error.message === "Contraseña incorrecta") {
         Toast.show({
-          type: 'error',
-          text1: '🔒 Error',
-          text2: 'La contraseña es incorrecta',
+          type: "error",
+          text1: "🔒 Error",
+          text2: "La contraseña es incorrecta",
         });
       } else {
         Toast.show({
-          type: 'error',
-          text1: '⚠️ Error',
-          text2: error.message || 'Error desconocido',
+          type: "error",
+          text1: "⚠️ Error",
+          text2: error.message || "Error desconocido",
         });
       }
     }
@@ -60,33 +122,34 @@ const Login = () => {
 
   return (
     <View style={estilosComunes.contenedorCentrado}>
+      <Image source={require("../../assets/img/logo.png")}/>
       <View style={styles.form}>
         <Text style={styles.title}>INFONOW</Text>
         <Text style={styles.subtitle}>Iniciar sesión</Text>
-        
-        <AuthInput 
-          placeholder="Usuario" 
-          value={username} 
-          onChangeText={setUsername} 
+
+        <AuthInput
+          placeholder="Usuario"
+          value={username}
+          onChangeText={setUsername}
           autoCapitalize="none"
         />
-        
-        <AuthInput 
-          placeholder="Contraseña" 
-          secureTextEntry 
-          value={password} 
-          onChangeText={setPassword} 
+
+        <AuthInput
+          placeholder="Contraseña"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
-        
-        <AuthButton 
-          title={loading ? 'Cargando...' : 'Ingresar'} 
-          onPress={handleLogin} 
+
+        <AuthButton
+          title={loading ? "Cargando..." : "Ingresar"}
+          onPress={handleLogin}
           disabled={loading}
         />
-        
+
         <View style={styles.linkRow}>
           <Text style={styles.textNormal}>¿Aún no tienes cuenta?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Registro')}>
+          <TouchableOpacity onPress={() => navigation.navigate("Registro")}>
             <Text style={styles.textLink}>Crear cuenta</Text>
           </TouchableOpacity>
         </View>
@@ -97,7 +160,9 @@ const Login = () => {
 
 const styles = StyleSheet.create({
   form: {
-    width: '80%', alignItems: 'center'
+    marginTop: 30,
+    width: "80%",
+    alignItems: "center",
   },
   title: {
     color: colores.textoClaro,
@@ -110,16 +175,19 @@ const styles = StyleSheet.create({
     fontSize: tipografia.tamaños.grande,
     fontWeight: tipografia.pesos.semiBold,
     marginBottom: espaciados.medio,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   linkRow: {
-    flexDirection: 'row', marginTop: espaciados.pequeño,
+    flexDirection: "row",
+    marginTop: espaciados.pequeño,
   },
   textNormal: {
-    color: colores.textoSecundario, marginRight: espaciados.pequeño
+    color: colores.textoSecundario,
+    marginRight: espaciados.pequeño,
   },
   textLink: {
-    color: colores.primario, fontWeight: tipografia.pesos.semiBold
+    color: colores.primario,
+    fontWeight: tipografia.pesos.semiBold,
   },
 });
 

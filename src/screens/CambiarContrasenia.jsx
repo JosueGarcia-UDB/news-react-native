@@ -53,7 +53,7 @@ const CambiarContrasenia = () => {
 
   return (
     <SafeAreaView style={styles.contenedor}>
-     
+    
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.contenido}>
         <AuthInput
           placeholder="Contraseña anterior"

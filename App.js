@@ -86,7 +86,7 @@ function NoticiasStackScreen() {
 
 function AppNavigator() {
   const { user, loading } = useContext(AuthContext);
-  
+
 
   if (loading) {
     return (
@@ -106,10 +106,10 @@ function AppNavigator() {
           </Stack.Group>
         ) : (
           <Stack.Group>
-            <Stack.Screen name="MainApp" component={NoticiasStackScreen} />
-            <Stack.Screen name="Configuracion" component={Configuracion} options={{ title: 'Configuración',headerShown: true, headerStyle: { backgroundColor: colores.fondoNavegacion }, headerTintColor: colores.textoClaro, headerTitleStyle: { fontWeight: 'bold' } }} />
-            <Stack.Screen name="EditarPerfil" component={EditarPerfil} options={{  title: 'Editar perfil',headerShown: true, headerStyle: { backgroundColor: colores.fondoNavegacion }, headerTintColor: colores.textoClaro, headerTitleStyle: { fontWeight: 'bold' } }}/>
-            <Stack.Screen name="CambiarContrasenia" component={CambiarContrasenia} options={{  title: 'Cambiar contraseña', headerShown: true, headerStyle: { backgroundColor: colores.fondoNavegacion }, headerTintColor: colores.textoClaro, headerTitleStyle: { fontWeight: 'bold' } }}/>
+            <Stack.Screen name="Inicio" component={NoticiasStackScreen} />
+            <Stack.Screen name="Configuracion" component={Configuracion} options={{ title: 'Perfil', headerShown: true, headerStyle: { backgroundColor: colores.fondoNavegacion }, headerTintColor: colores.textoClaro, headerTitleStyle: { fontWeight: 'bold' } }} />
+            <Stack.Screen name="EditarPerfil" component={EditarPerfil} options={{ title: 'Editar perfil', headerShown: true, headerStyle: { backgroundColor: colores.fondoNavegacion }, headerTintColor: colores.textoClaro, headerTitleStyle: { fontWeight: 'bold' } }} />
+            <Stack.Screen name="CambiarContrasenia" component={CambiarContrasenia} options={{ title: 'Cambiar contraseña', headerShown: true, headerStyle: { backgroundColor: colores.fondoNavegacion }, headerTintColor: colores.textoClaro, headerTitleStyle: { fontWeight: 'bold' } }} />
           </Stack.Group>
         )}
         <Stack.Screen name="Bloqueado" component={Bloqueado} />
@@ -150,19 +150,18 @@ export default function App() {
     return <SplashScreen onAnimationComplete={handleAnimationComplete} />;
   }
 
-  if(bloqueado) {
+  if (bloqueado) {
     return (
       <Bloqueado checkBiometricOnLaunch={checkBiometricOnLaunch} />
     )
   }
-
   return (
     <Provider store={store}>
       <SafeAreaProvider>
         <StatusBar style="light" backgroundColor="#000" />
         <AuthProvider>
           <AppNavigator />
-          <Toast /> {/* Agrega Toast aquí */}
+          <Toast /> 
         </AuthProvider>
       </SafeAreaProvider>
     </Provider>

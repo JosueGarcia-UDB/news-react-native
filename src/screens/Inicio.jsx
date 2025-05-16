@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native'; 
-import Cabecera from '../components/Header.jsx';
+import Header from '../components/Header.jsx';
 import TarjetaNoticia from '../components/TarjetaNoticia.jsx';
 import { colores, tipografia, espaciados } from '../styles/globales.js';
 import useNoticias from '../hooks/useNoticias.js';
@@ -54,7 +54,7 @@ const Inicio = ({ navigation }) => {
   if (cargando && !refreshing) {
     return (
       <SafeAreaView style={styles.contenedor}>
-        <Cabecera />
+        <Header />
         <View style={styles.cargando}>
           <ActivityIndicator size="large" color={colores.textoClaro} />
           <Text style={styles.cargandoTexto}>Cargando noticias...</Text>
@@ -66,7 +66,7 @@ const Inicio = ({ navigation }) => {
   if (error) {
     return (
       <SafeAreaView style={styles.contenedor}>
-        <Cabecera />
+        <Header />
         <View style={styles.cargando}>
           <Text style={styles.errorText}>
             Ocurrió un error al cargar las noticias. Por favor, intenta de nuevo.
@@ -82,7 +82,7 @@ const Inicio = ({ navigation }) => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.contenedor}>
-        <Cabecera />
+        <Header />
         <View style={styles.contenedorFlatList}>
           <FlatList
             style={styles.flatList}

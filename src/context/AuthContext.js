@@ -146,6 +146,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUserCountry = async (countryName) => {
+    if (!user) throw new Error('No hay usuario logueado');
+
+    try {
+      const userKey = `user_${user.username}`;
+
+      // Actualizar los datos del usuario con el país
+      const updatedUser = { ...user, country: countryName };
+      await AsyncStorage.setItem(userKey, JSON.stringify(updatedUser));
+
+      setUser(updatedUser);
+      return true;
+    } catch (error) {
+      console.error('Error al guardar el país del usuario:', error);
+      throw error;
+    }
+  };
+
   const changePassword = async (currentPassword, newPassword) => {
     if (!user) throw new Error('No hay usuario logueado');
 
@@ -168,7 +186,16 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, register, login, logout, updateProfile, changePassword }}
+      value={{
+        user,
+        loading,
+        register,
+        login,
+        logout,
+        updateProfile,
+        changePassword,
+        updateUserCountry
+      }}
     >
       {children}
     </AuthContext.Provider>
