@@ -14,11 +14,20 @@ import BusquedaAvanzada from "../components/BusquedaAvanzada.jsx";
 import TarjetaNoticia from "../components/TarjetaNoticia";
 import { useNuevaBusqueda } from "../hooks/useNuevaBusqueda";
 import { colores, tipografia, espaciados } from "../styles/globales.js";
+import PaginationControls from "../components/PaginationControls";
 
 const Buscar = () => {
   const [mostrarAvanzada, setMostrarAvanzada] = useState(false);
   const [query, setQuery] = useState("");
-  const { resultados, cargando, error, realizarBusqueda } = useNuevaBusqueda();
+  const {
+    resultados,
+    cargando,
+    error,
+    realizarBusqueda,
+    paginaActual,
+    totalPaginas,
+    cambiarPagina,
+  } = useNuevaBusqueda();
 
   const toggleBusquedaAvanzada = () => {
     setMostrarAvanzada(!mostrarAvanzada);
@@ -98,6 +107,15 @@ const Buscar = () => {
             {resultados.map((articulo, index) => (
               <TarjetaNoticia key={index} noticia={articulo} />
             ))}
+
+            {/* Controles de paginación */}
+            {resultados.length > 0 && totalPaginas > 1 && (
+              <PaginationControls
+                paginaActual={paginaActual}
+                totalPaginas={totalPaginas}
+                cambiarPagina={cambiarPagina}
+              />
+            )}
           </View>
         </ScrollView>
       </SafeAreaView>

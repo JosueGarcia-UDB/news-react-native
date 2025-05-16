@@ -8,6 +8,9 @@ const useFuentes = () => {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const ITEMS_POR_PAGINA = 10;
 
   useEffect(() => {
     Promise.all([
@@ -31,10 +34,17 @@ const useFuentes = () => {
         const mappedEs = sourcesEs.map(mapSource);
         const mappedEn = sourcesEn.map(mapSource);
 
-        // Agrupamos en secciones: la primera con fuentes en español y la segunda con fuentes en inglés
+        // Unir todas las fuentes para paginación global
+        const allSources = [...mappedEs, ...mappedEn];
+        const total = allSources.length;
+        setTotalPaginas(Math.max(1, Math.ceil(total / ITEMS_POR_PAGINA)));
+
+        // Paginación global (mezclando ambos idiomas)
+        const inicio = (paginaActual - 1) * ITEMS_POR_PAGINA;
+        const fin = inicio + ITEMS_POR_PAGINA;
+        const paginatedSources = allSources.slice(inicio, fin);
         setSections([
-          { title: 'Español', data: mappedEs },
-          { title: 'English', data: mappedEn },
+          { title: 'Fuentes', data: paginatedSources }
         ]);
         setLoading(false);
       })
@@ -42,9 +52,22 @@ const useFuentes = () => {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [paginaActual]);
 
-  return { sections, loading, error };
+  const cambiarPagina = (nuevaPagina) => {
+    if (nuevaPagina < 1 || nuevaPagina > totalPaginas) return;
+    setPaginaActual(nuevaPagina);
+  };
+
+  return {
+    sections,
+    loading,
+    error,
+    paginaActual,
+    totalPaginas,
+    cambiarPagina,
+    ITEMS_POR_PAGINA
+  };
 };
 
 export default useFuentes;

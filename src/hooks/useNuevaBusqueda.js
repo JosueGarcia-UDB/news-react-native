@@ -5,11 +5,26 @@ export const useNuevaBusqueda = () => {
   const [resultados, setResultados] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const ITEMS_POR_PAGINA = 10;
   const API_KEY = REACT_APP_API_KEY_NEWSAPI;
+
+  // Calcular resultados paginados
+  const resultadosPaginados = resultados.slice(
+    (paginaActual - 1) * ITEMS_POR_PAGINA,
+    paginaActual * ITEMS_POR_PAGINA
+  );
+
+  const cambiarPagina = (nuevaPagina) => {
+    if (nuevaPagina < 1 || nuevaPagina > totalPaginas) return;
+    setPaginaActual(nuevaPagina);
+  };
 
   const realizarBusqueda = async (parametros) => {
     setCargando(true);
     setError(null);
+    setPaginaActual(1); // Resetear página al buscar
 
     try {
       const url = new URL('https://newsapi.org/v2/everything');
@@ -53,13 +68,25 @@ export const useNuevaBusqueda = () => {
       }
 
       setResultados(data.articles);
+      setTotalPaginas(Math.ceil(data.articles.length / ITEMS_POR_PAGINA));
     } catch (err) {
-      setError(err.message.replace('newsapi.org', '')); 
+      setError(err.message.replace('newsapi.org', ''));
       setResultados([]);
+      setTotalPaginas(1);
     } finally {
       setCargando(false);
     }
   };
 
-  return { resultados, cargando, error, realizarBusqueda};
+  return {
+    resultados: resultadosPaginados,
+    cargando,
+    error,
+    realizarBusqueda,
+    paginaActual,
+    totalPaginas,
+    cambiarPagina,
+    totalResultados: resultados.length,
+    ITEMS_POR_PAGINA
+  };
 };

@@ -6,9 +6,17 @@ import Header from "../components/Header.jsx";
 import TarjetaFuente from "../components/TarjetaFuente.jsx";
 import { colores, tipografia, espaciados } from "../styles/globales.js";
 import useFuentes from "../hooks/useFuentes.js";
+import PaginationControls from "../components/PaginationControls";
 
 const Fuentes = () => {
-  const { sections, loading, error } = useFuentes();
+  const {
+    sections,
+    loading,
+    error,
+    paginaActual,
+    totalPaginas,
+    cambiarPagina,
+  } = useFuentes();
 
   if (loading) {
     return (
@@ -42,6 +50,15 @@ const Fuentes = () => {
             <Text style={styles.tituloSeccion}>{title}</Text>
           )}
           contentContainerStyle={styles.contenido}
+          ListFooterComponent={
+            sections[0]?.data?.length > 0 && totalPaginas > 1 ? (
+              <PaginationControls
+                paginaActual={paginaActual}
+                totalPaginas={totalPaginas}
+                cambiarPagina={cambiarPagina}
+              />
+            ) : null
+          }
         />
       </SafeAreaView>
     </SafeAreaProvider>
