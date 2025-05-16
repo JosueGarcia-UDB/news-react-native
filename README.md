@@ -108,22 +108,22 @@ A continuación, se presentan algunas capturas de la aplicación donde se muestr
 <div align="center">
 
 ### Pantalla de Login
-<img src="./src/assets/img/first-comparation.png" width="500" alt="Pantalla de Login" />
+<img src="./src/assets/img/first-comparation.png" width="auto" alt="Pantalla de Login" />
 
 ### Pantalla de Registro
-<img src="./src/assets/img/second-comparation.png" width="500" alt="Pantalla de Registro" />
+<img src="./src/assets/img/second-comparation.png" width="auto" alt="Pantalla de Registro" />
 
 ### Pantalla de Configuración
-<img src="./src/assets/img/third-comparation.png" width="500" alt="Pantalla de Configuración" />
+<img src="./src/assets/img/third-comparation.png" width="auto" alt="Pantalla de Configuración" />
 
 ### Pantalla de Inicio
-<img src="./src/assets/img/fourth-comparation.png" width="500" alt="Pantalla de Inicio" />
+<img src="./src/assets/img/fourth-comparation.png" width="auto" alt="Pantalla de Inicio" />
 
 ### Pantalla de Búsqueda
-<img src="./src/assets/img/sixth-comparation.png" width="500" alt="Pantalla de Búsqueda" />
+<img src="./src/assets/img/sixth-comparation.png" width="auto" alt="Pantalla de Búsqueda" />
 
 ### Pantalla de Fuentes
-<img src="./src/assets/img/fifth-comparation.png" width="500" alt="Pantalla de Fuentes" />
+<img src="./src/assets/img/fifth-comparation.png" width="auto" alt="Pantalla de Fuentes" />
 
 </div>
 
