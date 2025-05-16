@@ -18,6 +18,8 @@ import useNoticias from "../hooks/useNoticias.js";
 import { AuthContext } from "../context/AuthContext";
 import ConfiguracionModal from "../components/ConfiguracionModal.jsx";
 import { useCategorias } from "../context/CategoriasContext";
+import { useNoticiaLocal } from "../hooks/useNoticiaLocal";
+import CarruselNoticias from "../components/CarruselNoticias";
 
 const Inicio = ({ navigation, route }) => {
   const { noticias, cargando, error, ultimaActualizacion, recargar } =
@@ -27,6 +29,11 @@ const Inicio = ({ navigation, route }) => {
   const { verificarConfiguracionInicial, resetCategoriasActualizadas } =
     useCategorias();
   const [showConfigModal, setShowConfigModal] = useState(false);
+  const {
+    noticias: localNoticias,
+    loading: localLoading,
+    error: localError,
+  } = useNoticiaLocal();
 
   // Redirigir al login si no hay usuario
   useEffect(() => {
@@ -116,6 +123,19 @@ const Inicio = ({ navigation, route }) => {
     <SafeAreaProvider>
       <SafeAreaView style={styles.contenedor}>
         <Header />
+
+        <View style={styles.carrusel}>
+          {/* Título para el carrusel */}
+          <Text style={styles.tituloCarrusel}>
+            Lo más destacado en México
+          </Text>
+          <CarruselNoticias
+            noticias={localNoticias}
+            loading={localLoading}
+            error={localError}
+          />
+        </View>
+
         <View style={styles.contenedorFlatList}>
           <FlatList
             style={styles.flatList}
@@ -214,6 +234,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: espaciados.medio,
   },
+  tituloCarrusel: {
+    color: colores.textoClaro,
+    textAlign: "center",
+    fontSize: tipografia.tamaños.extraGrande,
+    fontWeight: tipografia.pesos.negrita,
+    marginTop: espaciados.base,
+    marginBottom: espaciados.base,
+  },
+  carrusel: {
+    height: 'auto',
+  }
 });
 
 export default Inicio;
