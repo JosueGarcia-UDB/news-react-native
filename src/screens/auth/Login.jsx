@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 500,
     objectFit: 'contain',
-    height: 100
+    height: 100,
   },
   title: {
     color: colores.textoClaro,

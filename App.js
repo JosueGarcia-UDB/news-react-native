@@ -54,7 +54,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <StatusBar style={colorScheme === 'dark' ? 'dark' : 'dark'}  />
+        <StatusBar style={colorScheme === 'dark' ? 'dark' : 'light'}  />
         <AuthProvider>
           <CategoriasProvider>
             <AppNavigator />

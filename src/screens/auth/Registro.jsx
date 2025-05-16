@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setError, clearError, clearAllErrors } from '../../redux/validationSlice';
@@ -74,6 +74,7 @@ const Registro = () => {
 
   return (
     <View style={estilosComunes.contenedorCentrado}>
+            <Image style={styles.logo} source={require("../../assets/img/logo.png")}/>
       <View style={styles.form}>
         <Text style={styles.title}>INFONOW</Text>
         <Text style={styles.subtitle}>Registrarse</Text>
@@ -131,6 +132,12 @@ const styles = StyleSheet.create({
   form: {
     width: '80%',
     alignItems: 'center',
+  },
+  logo: {
+    width: 600,
+    objectFit: 'contain',
+    height: 100,
+    marginBottom: 20,
   },
   title: {
     color: colores.textoClaro,
