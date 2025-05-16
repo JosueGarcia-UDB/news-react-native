@@ -6,23 +6,23 @@
 ## Nuevas funcionalidades
 **La última versión de INFO NOW incorpora mejoras significativas en la autenticación, gestión de usuarios y experiencia de lectura, optimizando la interacción del usuario con la plataforma.** A continuación, se detallan las nuevas funcionalidades implementadas:
 
-- **Inicio de Sesión: La aplicación ahora cuenta con un Log in que te permite ingresar a nuestra aplicación y si aún no tienes las credenciales puedes registrarte en el formulario de Registro.**
+- **Inicio de Sesión:** La aplicación ahora cuenta con un Log in que te permite ingresar a nuestra aplicación y si aún no tienes las credenciales puedes registrarte en el formulario de Registro.
 
-- **Registro: Serás capaz de registrarte y crear tu propio usuario con contraseña incluida para poder acceder a toda la aplicación.**
+- **Registro:** Serás capaz de registrarte y crear tu propio usuario con contraseña incluida para poder acceder a toda la aplicación.
 
-- **Panel de Configuración: Nueva interfaz unificada para:**
+- **Panel de Configuración:** Nueva interfaz unificada para:
 •	Edición de perfil 
 •	Cambio de contraseña
 •	Autenticación biométrica 
 
-- **Noticia Individual (Detalle): Rediseño de la vista de noticias. Al hacer clic en Leer más te mandará a la ventana donde la noticia se visualizará de forma breve por si quieres seguir leyendo puedes ir a visitar al sitio.**
+- **Noticia Individual (Detalle):** Rediseño de la vista de noticias. Al hacer clic en Leer más te mandará a la ventana donde la noticia se visualizará de forma breve por si quieres seguir leyendo puedes ir a visitar al sitio.
 
 ## Nuevas Dependencias agregadas
-- **react-redux: Conexión entre React y Redux.**
-- **expo-secure-store: Almacena datos sensibles (contraseñas) de forma segura.**
-- **react-native-gesture-handler & react-native-reanimated: Soporte para gestos táctiles y animaciones fluidas (requeridos por React Navigation)**
-- **react-native-async-storage/async-storage: Almacenamiento persistente simple (ej: preferencias de usuario).**
-- **expo-local-authentication: Integra autenticación biométrica (Face ID, Touch ID).**
+- **react-redux:** Conexión entre React y Redux.
+- **expo-secure-store:¨** Almacena datos sensibles (contraseñas) de forma segura.
+- **react-native-gesture-handler & react-native-reanimated:** Soporte para gestos táctiles y animaciones fluidas (requeridos por React Navigation)
+- **react-native-async-storage/async-storage:** Almacenamiento persistente simple (ej: preferencias de usuario).
+- **expo-local-authentication:** Integra autenticación biométrica (Face ID, Touch ID).
 
 ## Tecnologías utilizadas
 - **Expo**
