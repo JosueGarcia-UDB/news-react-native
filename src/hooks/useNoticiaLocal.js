@@ -33,7 +33,7 @@ export function useNoticiaLocal() {
       }
       try {
         const countryCode = countryNameToCode[user.country] || user.country.toLowerCase();
-        const url = `${URL_API_NEWS_DATA}?country=${countryCode}&apikey=${API_KEY_NEWS_DATA}&language=en&category=top`;
+        const url = `${URL_API_NEWS_DATA}?country=${countryCode}&apikey=${API_KEY_NEWS_DATA}&language=es&category=top`;
         console.log(url);
         const response = await fetch(url);
         const data = await response.json();

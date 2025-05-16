@@ -5,7 +5,7 @@ import { AuthContext } from './AuthContext';
 const CATEGORIAS_INICIALES = [
   { id: '1', nombre: 'Business', nombreCategoria: 'Negocios', seleccionada: false },
   { id: '2', nombre: 'Entertainment', nombreCategoria: 'Entretenimiento', seleccionada: false },
-  { id: '3', nombre: 'General', nombreCategoria: 'General', seleccionada: false },
+  { id: '3', nombre: 'General', nombreCategoria: 'General', seleccionada: true },
   { id: '4', nombre: 'Health', nombreCategoria: 'Salud', seleccionada: false },
   { id: '5', nombre: 'Science', nombreCategoria: 'Ciencia', seleccionada: false },
   { id: '6', nombre: 'Sports', nombreCategoria: 'Deportes', seleccionada: false },

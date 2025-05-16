@@ -16,13 +16,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import { useFocusEffect } from "@react-navigation/native";
 import Header from "../components/Header.jsx";
 import TarjetaNoticia from "../components/TarjetaNoticia.jsx";
 import { colores, tipografia, espaciados } from "../styles/globales.js";
 import useNoticias from "../hooks/useNoticias.js";
 import { AuthContext } from "../context/AuthContext";
-import ConfiguracionModal from "../components/ConfiguracionModal.jsx";
 import { useCategorias } from "../context/CategoriasContext";
 import { useNoticiaLocal } from "../hooks/useNoticiaLocal";
 import CarruselNoticias from "../components/CarruselNoticias";
@@ -41,9 +39,7 @@ const Inicio = ({ navigation, route }) => {
   } = useNoticias();
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
-  const { verificarConfiguracionInicial, resetCategoriasActualizadas } =
-    useCategorias();
-  const [showConfigModal, setShowConfigModal] = useState(false);
+  const { resetCategoriasActualizadas } = useCategorias();
   const {
     noticias: localNoticias,
     loading: localLoading,
@@ -51,20 +47,14 @@ const Inicio = ({ navigation, route }) => {
   } = useNoticiaLocal();
   const flatListRef = useRef(null);
 
-  // Redirigir al login si no hay usuario
+  // Redirigir al login si no hay usuario y recargar noticias al montar
   useEffect(() => {
     if (!user) {
       navigation.reset({ index: 0, routes: [{ name: "Login" }] });
     } else {
-      // Verificar si es la primera vez que el usuario inicia sesión
-      const checkFirstLogin = async () => {
-        const configuracionCompletada = await verificarConfiguracionInicial();
-        setShowConfigModal(!configuracionCompletada);
-      };
-
-      checkFirstLogin();
+      recargar();
     }
-  }, [user]);
+  }, [user, recargar]);
 
   // Detectar si debe refrescar las noticias (después de cambiar categorías)
   useEffect(() => {
@@ -74,28 +64,11 @@ const Inicio = ({ navigation, route }) => {
     }
   }, [route.params?.refreshNews, route.params?.timestamp]);
 
-  // Recargar noticias al volver a esta pantalla
-  useFocusEffect(
-    useCallback(() => {
-      recargar();
-    }, [recargar])
-  );
-
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await recargar();
     setRefreshing(false);
   }, [recargar]);
-
-  const handleModalClose = (shouldRefresh = false) => {
-    setShowConfigModal(false);
-    if (shouldRefresh) {
-      // Force immediate reload of news with slight delay to ensure state is updated
-      setTimeout(() => {
-        recargar();
-      }, 100);
-    }
-  };
 
   const renderUltimaActualizacion = () => {
     if (!ultimaActualizacion) return null;
@@ -107,10 +80,7 @@ const Inicio = ({ navigation, route }) => {
   };
 
   const handlePageChange = (newPage) => {
-    // Cambiar la página
     cambiarPagina(newPage);
-
-    // Hacer scroll al inicio después de un pequeño retraso para asegurar que los datos se han actualizado
     setTimeout(() => {
       if (flatListRef.current) {
         flatListRef.current.scrollToOffset({ offset: 0, animated: true });
@@ -212,11 +182,6 @@ const Inicio = ({ navigation, route }) => {
               tintColor={colores.textoClaro}
             />
           }
-        />
-
-        <ConfiguracionModal
-          visible={showConfigModal}
-          onClose={handleModalClose}
         />
       </SafeAreaView>
     </SafeAreaProvider>

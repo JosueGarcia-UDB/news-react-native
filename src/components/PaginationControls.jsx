@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   paginationButton: {
     backgroundColor: colores.boton,
     paddingVertical: espaciados.pequeño,
-    paddingHorizontal: espaciados.medio,
+    paddingHorizontal: espaciados.pequeño,
     borderRadius: espaciados.radioBorde.pequeño,
   },
   paginationButtonDisabled: {
