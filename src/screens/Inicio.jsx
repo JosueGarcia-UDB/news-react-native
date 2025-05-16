@@ -1,5 +1,11 @@
 // src/screens/Inicio.js
-import React, { useState, useCallback, useContext, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+} from "react";
 import {
   View,
   Text,
@@ -8,7 +14,6 @@ import {
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
@@ -21,10 +26,19 @@ import ConfiguracionModal from "../components/ConfiguracionModal.jsx";
 import { useCategorias } from "../context/CategoriasContext";
 import { useNoticiaLocal } from "../hooks/useNoticiaLocal";
 import CarruselNoticias from "../components/CarruselNoticias";
+import PaginationControls from "../components/PaginationControls";
 
 const Inicio = ({ navigation, route }) => {
-  const { noticias, cargando, error, ultimaActualizacion, recargar } =
-    useNoticias();
+  const {
+    noticias,
+    cargando,
+    error,
+    ultimaActualizacion,
+    recargar,
+    paginaActual,
+    totalPaginas,
+    cambiarPagina,
+  } = useNoticias();
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
   const { verificarConfiguracionInicial, resetCategoriasActualizadas } =
@@ -35,6 +49,7 @@ const Inicio = ({ navigation, route }) => {
     loading: localLoading,
     error: localError,
   } = useNoticiaLocal();
+  const flatListRef = useRef(null);
 
   // Redirigir al login si no hay usuario
   useEffect(() => {
@@ -89,6 +104,18 @@ const Inicio = ({ navigation, route }) => {
         Última actualización: {ultimaActualizacion.toLocaleTimeString()}
       </Text>
     );
+  };
+
+  const handlePageChange = (newPage) => {
+    // Cambiar la página
+    cambiarPagina(newPage);
+
+    // Hacer scroll al inicio después de un pequeño retraso para asegurar que los datos se han actualizado
+    setTimeout(() => {
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({ offset: 0, animated: true });
+      }
+    }, 100);
   };
 
   if (cargando && !refreshing) {
@@ -148,8 +175,9 @@ const Inicio = ({ navigation, route }) => {
     <SafeAreaProvider>
       <SafeAreaView style={styles.contenedor}>
         <Header />
-        
+
         <FlatList
+          ref={flatListRef}
           style={styles.flatList}
           contentContainerStyle={styles.contenido}
           data={noticias}
@@ -160,6 +188,13 @@ const Inicio = ({ navigation, route }) => {
               {renderCarrusel()}
               {renderNoticiasCategoriaHeader()}
             </>
+          }
+          ListFooterComponent={
+            <PaginationControls
+              paginaActual={paginaActual}
+              totalPaginas={totalPaginas}
+              cambiarPagina={handlePageChange}
+            />
           }
           ListEmptyComponent={
             noticias.length === 0 && (

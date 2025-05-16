@@ -4,14 +4,22 @@ import { useCategorias } from '../context/CategoriasContext';
 import { REACT_APP_API_KEY_NEWSAPI } from '@env';
 
 const API_KEY = REACT_APP_API_KEY_NEWSAPI;
+// Constantes para la paginación
+const ITEMS_POR_PAGINA = 10;
 
 const useNoticias = () => {
   const { categorias, categoriasActualizadas } = useCategorias();
   const [noticias, setNoticias] = useState([]);
+  const [noticiasFiltradas, setNoticiasFiltradas] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [ultimaActualizacion, setUltimaActualizacion] = useState(null);
   const prevCategoriasRef = useRef(null);
+
+  // Estados para la paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [totalNoticias, setTotalNoticias] = useState(0);
 
   // Verificar si las categorías seleccionadas han cambiado
   const hanCambiadoCategorias = useCallback(() => {
@@ -40,6 +48,10 @@ const useNoticias = () => {
 
       if (categoriasSeleccionadas.length === 0) {
         setNoticias([]);
+        setNoticiasFiltradas([]);
+        setTotalPaginas(1);
+        setTotalNoticias(0);
+        setPaginaActual(1);
         setCargando(false);
         return;
       }
@@ -50,7 +62,8 @@ const useNoticias = () => {
 
       for (const categoria of categoriasSeleccionadas) {
         try {
-          const url = `https://newsapi.org/v2/top-headlines?category=${categoria}&country=${country}&apiKey=${API_KEY}`;
+          // Añadimos el parámetro pageSize para obtener más resultados por categoría
+          const url = `https://newsapi.org/v2/top-headlines?category=${categoria}&country=${country}&apiKey=${API_KEY}&pageSize=100`;
           const response = await fetch(url);
 
           if (!response.ok) {
@@ -92,6 +105,15 @@ const useNoticias = () => {
       );
 
       setNoticias(noticiasOrdenadas);
+      setTotalNoticias(noticiasOrdenadas.length);
+      setTotalPaginas(Math.ceil(noticiasOrdenadas.length / ITEMS_POR_PAGINA));
+
+      // Resetear a la primera página cuando se obtienen nuevas noticias
+      setPaginaActual(1);
+
+      // Actualizar las noticias filtradas para la página actual
+      actualizarNoticiasPorPagina(1, noticiasOrdenadas);
+
       setUltimaActualizacion(new Date());
 
       // Actualizar categorías de referencia
@@ -104,6 +126,27 @@ const useNoticias = () => {
     }
   }, [categorias]);
 
+  // Función para cambiar de página
+  const cambiarPagina = useCallback((numeroPagina) => {
+    if (numeroPagina < 1 || numeroPagina > totalPaginas) return;
+    setPaginaActual(numeroPagina);
+    actualizarNoticiasPorPagina(numeroPagina);
+  }, [totalPaginas]);
+
+  // Función para actualizar las noticias según la página actual
+  const actualizarNoticiasPorPagina = useCallback((pagina, noticiasCompletas = null) => {
+    const noticiasAFiltrar = noticiasCompletas || noticias;
+    const inicio = (pagina - 1) * ITEMS_POR_PAGINA;
+    const fin = inicio + ITEMS_POR_PAGINA;
+    const noticiasPagina = noticiasAFiltrar.slice(inicio, fin);
+    setNoticiasFiltradas(noticiasPagina);
+  }, [noticias]);
+
+  // Actualizar noticias filtradas cuando cambia la página actual
+  useEffect(() => {
+    actualizarNoticiasPorPagina(paginaActual);
+  }, [paginaActual, actualizarNoticiasPorPagina]);
+
   // Cargar noticias cuando cambian las categorías
   useEffect(() => {
     // Siempre obtener noticias cuando se monta el componente o cuando hay categorías actualizadas
@@ -111,11 +154,17 @@ const useNoticias = () => {
   }, [obtenerNoticias, categoriasActualizadas]);
 
   return {
-    noticias,
+    noticias: noticiasFiltradas,
+    noticiasCompletas: noticias,
     cargando,
     error,
     ultimaActualizacion,
     recargar: obtenerNoticias,
+    paginaActual,
+    totalPaginas,
+    totalNoticias,
+    cambiarPagina,
+    ITEMS_POR_PAGINA
   };
 };
 
