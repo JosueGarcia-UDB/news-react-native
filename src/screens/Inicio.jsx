@@ -1,5 +1,5 @@
 // src/screens/Inicio.js
-import React, { useState, useCallback, useContext, useEffect } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,26 +8,48 @@ import {
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
-} from 'react-native';
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native'; 
-import Header from '../components/Header.jsx';
-import TarjetaNoticia from '../components/TarjetaNoticia.jsx';
-import { colores, tipografia, espaciados } from '../styles/globales.js';
-import useNoticias from '../hooks/useNoticias.js';
-import { AuthContext } from '../context/AuthContext';
+} from "react-native";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
+import Header from "../components/Header.jsx";
+import TarjetaNoticia from "../components/TarjetaNoticia.jsx";
+import { colores, tipografia, espaciados } from "../styles/globales.js";
+import useNoticias from "../hooks/useNoticias.js";
+import { AuthContext } from "../context/AuthContext";
+import ConfiguracionModal from "../components/ConfiguracionModal.jsx";
+import { useCategorias } from "../context/CategoriasContext";
 
-const Inicio = ({ navigation }) => {
-  const { noticias, cargando, error, ultimaActualizacion, recargar } = useNoticias();
+const Inicio = ({ navigation, route }) => {
+  const { noticias, cargando, error, ultimaActualizacion, recargar } =
+    useNoticias();
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
+  const { verificarConfiguracionInicial, resetCategoriasActualizadas } =
+    useCategorias();
+  const [showConfigModal, setShowConfigModal] = useState(false);
 
   // Redirigir al login si no hay usuario
   useEffect(() => {
     if (!user) {
-      navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+      navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+    } else {
+      // Verificar si es la primera vez que el usuario inicia sesión
+      const checkFirstLogin = async () => {
+        const configuracionCompletada = await verificarConfiguracionInicial();
+        setShowConfigModal(!configuracionCompletada);
+      };
+
+      checkFirstLogin();
     }
   }, [user]);
+
+  // Detectar si debe refrescar las noticias (después de cambiar categorías)
+  useEffect(() => {
+    if (route.params?.refreshNews) {
+      recargar();
+      resetCategoriasActualizadas();
+    }
+  }, [route.params?.refreshNews, route.params?.timestamp]);
 
   // Recargar noticias al volver a esta pantalla
   useFocusEffect(
@@ -41,6 +63,16 @@ const Inicio = ({ navigation }) => {
     await recargar();
     setRefreshing(false);
   }, [recargar]);
+
+  const handleModalClose = (shouldRefresh = false) => {
+    setShowConfigModal(false);
+    if (shouldRefresh) {
+      // Force immediate reload of news with slight delay to ensure state is updated
+      setTimeout(() => {
+        recargar();
+      }, 100);
+    }
+  };
 
   const renderUltimaActualizacion = () => {
     if (!ultimaActualizacion) return null;
@@ -69,7 +101,8 @@ const Inicio = ({ navigation }) => {
         <Header />
         <View style={styles.cargando}>
           <Text style={styles.errorText}>
-            Ocurrió un error al cargar las noticias. Por favor, intenta de nuevo.
+            Ocurrió un error al cargar las noticias. Por favor, intenta de
+            nuevo.
           </Text>
           <TouchableOpacity style={styles.botonReintentar} onPress={recargar}>
             <Text style={styles.textoBotonReintentar}>Reintentar</Text>
@@ -100,7 +133,8 @@ const Inicio = ({ navigation }) => {
             }
             ListEmptyComponent={
               <Text style={styles.sinNoticias}>
-                No hay noticias disponibles. Por favor, selecciona algunas categorías en la configuración.
+                No hay noticias disponibles. Por favor, selecciona algunas
+                categorías en la configuración.
               </Text>
             }
             refreshControl={
@@ -113,6 +147,11 @@ const Inicio = ({ navigation }) => {
             }
           />
         </View>
+
+        <ConfiguracionModal
+          visible={showConfigModal}
+          onClose={handleModalClose}
+        />
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -128,8 +167,8 @@ const styles = StyleSheet.create({
   },
   cargando: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   cargandoTexto: {
     color: colores.textoClaro,
@@ -139,7 +178,7 @@ const styles = StyleSheet.create({
   errorText: {
     color: colores.textoClaro,
     fontSize: tipografia.tamaños.medio,
-    textAlign: 'center',
+    textAlign: "center",
     padding: espaciados.base,
   },
   botonReintentar: {
@@ -156,7 +195,7 @@ const styles = StyleSheet.create({
   },
   tituloSeccion: {
     color: colores.textoClaro,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: tipografia.tamaños.extraGrande,
     fontWeight: tipografia.pesos.negrita,
     marginTop: 0,
@@ -166,13 +205,13 @@ const styles = StyleSheet.create({
   sinNoticias: {
     color: colores.textoClaro,
     fontSize: tipografia.tamaños.medio,
-    textAlign: 'center',
+    textAlign: "center",
     padding: espaciados.base,
   },
   ultimaActualizacion: {
     color: colores.textoTerciario,
     fontSize: tipografia.tamaños.pequeño,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: espaciados.medio,
   },
 });

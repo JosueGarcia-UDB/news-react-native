@@ -73,7 +73,7 @@ const Login = () => {
       // Redirecciona después de obtener (o intentar obtener) la ubicación
       navigation.reset({
         index: 0,
-        routes: [{ name: "Home" }],
+        routes: [{ name: "Inicio" }],
       });
     } catch (error) {
       console.error("Error obteniendo ubicación:", error);
@@ -122,7 +122,7 @@ const Login = () => {
 
   return (
     <View style={estilosComunes.contenedorCentrado}>
-      <Image source={require("../../assets/img/logo.png")}/>
+      <Image style={styles.logo} source={require("../../assets/img/logo.png")}/>
       <View style={styles.form}>
         <Text style={styles.title}>INFONOW</Text>
         <Text style={styles.subtitle}>Iniciar sesión</Text>
@@ -163,6 +163,11 @@ const styles = StyleSheet.create({
     marginTop: 30,
     width: "80%",
     alignItems: "center",
+  },
+  logo: {
+    width: 500,
+    objectFit: 'contain',
+    height: 100
   },
   title: {
     color: colores.textoClaro,

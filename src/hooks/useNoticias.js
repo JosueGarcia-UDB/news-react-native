@@ -1,15 +1,32 @@
 // hooks/useNoticias.js (versión simplificada)
-import { useState, useEffect, useCallback } from 'react';
-import useCategorias from './useCategorias';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCategorias } from '../context/CategoriasContext';
 
 const API_KEY = '074708e3af494bc8960fe054b4557298';
 
 const useNoticias = () => {
-  const { categorias } = useCategorias();
+  const { categorias, categoriasActualizadas } = useCategorias();
   const [noticias, setNoticias] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [ultimaActualizacion, setUltimaActualizacion] = useState(null);
+  const prevCategoriasRef = useRef(null);
+
+  // Verificar si las categorías seleccionadas han cambiado
+  const hanCambiadoCategorias = useCallback(() => {
+    if (!prevCategoriasRef.current) return true;
+
+    const categoriasAnteriores = prevCategoriasRef.current.filter(cat => cat.seleccionada);
+    const categoriasActuales = categorias.filter(cat => cat.seleccionada);
+
+    if (categoriasAnteriores.length !== categoriasActuales.length) return true;
+
+    return categoriasActuales.some(catActual =>
+      !categoriasAnteriores.some(catAnterior =>
+        catAnterior.id === catActual.id
+      )
+    );
+  }, [categorias]);
 
   const obtenerNoticias = useCallback(async () => {
     setCargando(true);
@@ -75,6 +92,9 @@ const useNoticias = () => {
 
       setNoticias(noticiasOrdenadas);
       setUltimaActualizacion(new Date());
+
+      // Actualizar categorías de referencia
+      prevCategoriasRef.current = [...categorias];
     } catch (error) {
       console.error('Error al obtener noticias:', error);
       setError(error.message || 'Error desconocido al cargar noticias');
@@ -83,9 +103,11 @@ const useNoticias = () => {
     }
   }, [categorias]);
 
+  // Cargar noticias cuando cambian las categorías
   useEffect(() => {
+    // Siempre obtener noticias cuando se monta el componente o cuando hay categorías actualizadas
     obtenerNoticias();
-  }, [obtenerNoticias]);
+  }, [obtenerNoticias, categoriasActualizadas]);
 
   return {
     noticias,

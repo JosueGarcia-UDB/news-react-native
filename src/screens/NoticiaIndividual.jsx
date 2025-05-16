@@ -40,6 +40,17 @@ const NoticiaIndividual = ({ route, navigation }) => {
     }
   };
 
+    // Dentro del componente, antes del return o directamente en el render:
+  const limpiarContenido = (texto) => {
+    if (!texto) return "No hay contenido disponible para esta noticia.";
+    // Cortar donde empiece "[+"
+    const index = texto.indexOf(" [+");
+    if (index !== -1) {
+      return texto.substring(0, index).trim();
+    }
+    return texto.trim();
+  };
+
   return (
     <SafeAreaProvider>
       <ScrollView style={styles.container}>
@@ -85,7 +96,7 @@ const NoticiaIndividual = ({ route, navigation }) => {
         <View style={styles.contenidoContainer}>
           <Text style={styles.contenidoLabel}>Descripción:</Text>
           <Text style={styles.contenido}>
-            {content || "No hay contenido disponible para esta noticia."}
+            {limpiarContenido(content) || "No hay contenido disponible para esta noticia."}
           </Text>
         </View>
 

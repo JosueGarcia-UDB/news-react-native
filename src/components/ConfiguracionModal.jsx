@@ -1,7 +1,14 @@
 // components/ConfiguracionModal.js
-import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import useCategorias from '../hooks/useCategorias';
+import React from "react";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
+import { useCategorias } from "../context/CategoriasContext";
 
 const ConfiguracionModal = ({ visible, onClose }) => {
   const { categorias, toggleCategoria, guardarPreferencias } = useCategorias();
@@ -9,10 +16,11 @@ const ConfiguracionModal = ({ visible, onClose }) => {
   const handleGuardar = async () => {
     const guardadoExitoso = await guardarPreferencias();
     if (guardadoExitoso) {
-      onClose();
+      // Siempre indicar que se deben refrescar las noticias
+      onClose(true);
     } else {
       // Mostrar un mensaje de error si es necesario
-      console.error('No se pudieron guardar las preferencias');
+      console.error("No se pudieron guardar las preferencias");
     }
   };
 
@@ -21,7 +29,7 @@ const ConfiguracionModal = ({ visible, onClose }) => {
       animationType="slide"
       transparent={true}
       visible={visible}
-      onRequestClose={onClose}
+      onRequestClose={() => onClose(false)}
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
@@ -41,16 +49,15 @@ const ConfiguracionModal = ({ visible, onClose }) => {
                     <Text style={styles.checkmark}>✓</Text>
                   )}
                 </View>
-                <Text style={styles.nombreCategoria}>{categoria.nombreCategoria}</Text>
+                <Text style={styles.nombreCategoria}>
+                  {categoria.nombreCategoria}
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
 
           {/* Botón de guardar centrado */}
-          <TouchableOpacity
-            style={styles.botonGuardar}
-            onPress={handleGuardar}
-          >
+          <TouchableOpacity style={styles.botonGuardar} onPress={handleGuardar}>
             <Text style={styles.textoBotonGuardar}>Guardar</Text>
           </TouchableOpacity>
         </View>
@@ -62,14 +69,14 @@ const ConfiguracionModal = ({ visible, onClose }) => {
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContainer: {
-    width: '90%',
-    maxHeight: '80%',
-    backgroundColor: '#1E1E1E',
+    width: "90%",
+    maxHeight: "80%",
+    backgroundColor: "#1E1E1E",
     borderRadius: 10,
     padding: 20,
   },
@@ -78,47 +85,47 @@ const styles = StyleSheet.create({
   },
   tituloSeccion: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    color: 'white',
-    textAlign: 'center',
+    color: "white",
+    textAlign: "center",
   },
   categoriaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 15,
   },
   checkboxContainer: {
     width: 24,
     height: 24,
     borderWidth: 1,
-    borderColor: '#555',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderColor: "#555",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 10,
-    backgroundColor: '#333',
+    backgroundColor: "#333",
     borderRadius: 4,
   },
   checkmark: {
     fontSize: 16,
-    color: 'white',
+    color: "white",
   },
   nombreCategoria: {
     fontSize: 16,
-    color: 'white',
+    color: "white",
   },
   botonGuardar: {
-    backgroundColor: '#444',
+    backgroundColor: "#444",
     padding: 15,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
   },
   textoBotonGuardar: {
     fontSize: 18,
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
 });
 
-export default ConfiguracionModal
+export default ConfiguracionModal;

@@ -26,6 +26,7 @@ import NoticiaIndividual from './src/screens/NoticiaIndividual';
 import Bloqueado from './src/screens/auth/Bloqueado';
 import { colores } from './src/styles/globales';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CategoriasProvider } from './src/context/CategoriasContext';
 
 // Asegúrate de que el servidor de desarrollo esté ejecutándose correctamente
 const Tab = createBottomTabNavigator();
@@ -160,8 +161,10 @@ export default function App() {
       <SafeAreaProvider>
         <StatusBar style="light" backgroundColor="#000" />
         <AuthProvider>
-          <AppNavigator />
-          <Toast /> 
+          <CategoriasProvider>
+            <AppNavigator />
+            <Toast />
+          </CategoriasProvider>
         </AuthProvider>
       </SafeAreaProvider>
     </Provider>

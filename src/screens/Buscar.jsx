@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import Cabecera from "../components/Header.jsx";
+import Header from "../components/Header.jsx";
 import BusquedaAvanzada from "../components/BusquedaAvanzada.jsx";
 import TarjetaNoticia from "../components/TarjetaNoticia";
 import { useNuevaBusqueda } from "../hooks/useNuevaBusqueda";
@@ -44,7 +44,7 @@ const Buscar = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.contenedor}>
-        <Cabecera />
+        <Header />
         <ScrollView style={styles.scrollView}>
           <View style={styles.contenido}>
             <Text style={styles.tituloSeccion}>

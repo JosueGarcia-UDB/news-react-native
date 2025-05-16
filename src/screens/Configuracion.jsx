@@ -8,7 +8,7 @@ import {
   StyleSheet,
   Platform,
 } from "react-native";
-import useCategorias from "../hooks/useCategorias";
+import { useCategorias } from "../context/CategoriasContext";
 import AuthButton from "../components/AuthButton";
 import { AuthContext } from "../context/AuthContext";
 import * as LocalAuthentication from "expo-local-authentication";
@@ -22,7 +22,12 @@ import {
 import useCurrentLocation from "../hooks/useCurrentLocation";
 
 const Configuracion = ({ navigation }) => {
-  const { categorias, toggleCategoria, guardarPreferencias } = useCategorias();
+  const {
+    categorias,
+    toggleCategoria,
+    guardarPreferencias,
+    categoriasActualizadas,
+  } = useCategorias();
   const { logout, user } = useContext(AuthContext);
   const { getCurrentLocation } = useCurrentLocation();
 
@@ -53,7 +58,18 @@ const Configuracion = ({ navigation }) => {
   const handleGoBack = async () => {
     const guardadoExitoso = await guardarPreferencias();
     if (guardadoExitoso) {
-      navigation.navigate("Home", { screen: "Inicio" });
+      if (categoriasActualizadas) {
+        // Si hubo cambios en las categorías, forzamos un refresh navegando a Inicio
+        navigation.navigate("Home", {
+          screen: "Inicio",
+          params: {
+            refreshNews: true,
+            timestamp: new Date().getTime(),
+          },
+        });
+      } else {
+        navigation.navigate("Home", { screen: "Inicio" });
+      }
     } else {
       console.error("Error al guardar las preferencias");
     }
@@ -97,7 +113,18 @@ const Configuracion = ({ navigation }) => {
     console.log("Navegando a Home con Inicio activo");
     const guardadoExitoso = await guardarPreferencias();
     if (guardadoExitoso) {
-      navigation.navigate("Home", { screen: "Inicio" });
+      if (categoriasActualizadas) {
+        // Si hubo cambios en las categorías, forzamos un refresh
+        navigation.navigate("Home", {
+          screen: "Inicio",
+          params: {
+            refreshNews: true,
+            timestamp: new Date().getTime(),
+          },
+        });
+      } else {
+        navigation.navigate("Home", { screen: "Inicio" });
+      }
     } else {
       console.error("Error al guardar las preferencias");
     }

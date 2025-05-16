@@ -2,7 +2,7 @@
 import React from "react";
 import { View, Text, StyleSheet, SectionList } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import Cabecera from "../components/Header.jsx";
+import Header from "../components/Header.jsx";
 import TarjetaFuente from "../components/TarjetaFuente.jsx";
 import { colores, tipografia, espaciados } from "../styles/globales.js";
 import useFuentes from "../hooks/useFuentes.js";
@@ -13,7 +13,7 @@ const Fuentes = () => {
   if (loading) {
     return (
       <SafeAreaView style={styles.contenedor}>
-        <Cabecera />
+        <Header />
         <Text style={{ color: colores.textoClaro, textAlign: "center" }}>
           Cargando...
         </Text>
@@ -24,7 +24,7 @@ const Fuentes = () => {
   if (error) {
     return (
       <SafeAreaView style={styles.contenedor}>
-        <Cabecera />
+        <Header />
         <Text style={{ color: "red", textAlign: "center" }}>{error}</Text>
       </SafeAreaView>
     );
@@ -33,7 +33,7 @@ const Fuentes = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.contenedor}>
-        <Cabecera />
+        <Header />
         <SectionList
           sections={sections}
           keyExtractor={(item) => item.id}
