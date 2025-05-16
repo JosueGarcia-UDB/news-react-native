@@ -3,9 +3,9 @@
 ## 📋 Descripción
 **InfoNow** es una aplicación móvil desarrollada en **React Native** que permite a los usuarios acceder a noticias en tiempo real de diversas categorías. La aplicación consume la API de **NewsAPI** para obtener información actualizada y presenta una interfaz intuitiva y amigable.
 
-<img src="./src/assets/img/portada.png" style="border-radius: 10px">
+<img src="./src/assets/img/portada.png">
 
-<img src="./src/assets/img/animation.gif" width="100%" style="border-radius: 10px">
+<img src="./src/assets/img/animation.gif" width="100%">
 
 ## 🗃️ Características Principales
 
@@ -104,10 +104,28 @@ Puedes visualizar los prototipos de la aplicación en el siguiente enlace:
 
 ## 📸 Capturas de Pantalla
 A continuación, se presentan algunas capturas de la aplicación donde se muestra el resultado y el diseño inicial en Figma:
-|<p style="text-align: center; font-weight: bold">Pantalla de Login</p> <img src="./src/assets/img/first-comparation.png" style="border-radius: 10px; height: auto; width: 100%;" /> | <p style="text-align: center; font-weight: bold">Pantalla de Registro</p> <img src="./src/assets/img/second-comparation.png" style="border-radius: 10px; height: auto; width: 100%;" /> |
-|----------------------------------|----------------------------------|
-| <p style="text-align: center; font-weight: bold">Pantalla de Configuración</p> <img src="./src/assets/img/third-comparation.png" style="border-radius: 10px; height: auto; width: 100%;" /> | <p style="text-align: center; font-weight: bold">Pantalla de Inicio</p> <img src="./src/assets/img/fourth-comparation.png" style="border-radius: 10px; height: auto; width: 100%;" /> |
-| <p style="text-align: center; font-weight: bold">Pantalla de Busqueda</p> <img src="./src/assets/img/sixth-comparation.png" style="border-radius: 10px; height: auto; width: 100%;" /> | <p style="text-align: center; font-weight: bold">Pantalla de Fuentes</p> <img src="./src/assets/img/fifth-comparation.png" style="border-radius: 10px; height: auto; width: 100%;" /> |
+
+<div align="center">
+
+### Pantalla de Login
+<img src="./src/assets/img/first-comparation.png" width="500" alt="Pantalla de Login" />
+
+### Pantalla de Registro
+<img src="./src/assets/img/second-comparation.png" width="500" alt="Pantalla de Registro" />
+
+### Pantalla de Configuración
+<img src="./src/assets/img/third-comparation.png" width="500" alt="Pantalla de Configuración" />
+
+### Pantalla de Inicio
+<img src="./src/assets/img/fourth-comparation.png" width="500" alt="Pantalla de Inicio" />
+
+### Pantalla de Búsqueda
+<img src="./src/assets/img/sixth-comparation.png" width="500" alt="Pantalla de Búsqueda" />
+
+### Pantalla de Fuentes
+<img src="./src/assets/img/fifth-comparation.png" width="500" alt="Pantalla de Fuentes" />
+
+</div>
 
 ## 🔄 Problemas Conocidos y Soluciones
 - La sincronización entre la solicitud de permisos de localización y el modal de configuración inicial puede causar problemas para cargar noticias locales. Como solución parcial, la categoría "General" aparece preseleccionada por defecto.
